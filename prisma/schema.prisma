@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+// Configuração do banco de dados
+datasource db {
+  provider = "mysql" // Altere para "postgres" ou "sqlite" se necessário
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// MODELOS PRINCIPAIS
+
+model RDS {
+  id                String   @id @default(uuid())  
+  data              DateTime
+  empresaContrato   Contrato @relation(fields: [empresaContratoId], references: [id])
+  empresaContratoId String
+  encarregado       Encarregado @relation(fields: [encarregadoId], references: [id])
+  encarregadoId     String
+
+  // Relacionamentos N:N
+  servicos         RDS_Servico[]
+  atividades       RDS_Atividade[]
+  maoDeObra        RDS_MaoDeObra[]
+  equipamentos     RDS_Equipamento[]
+  motivosDePausa   RDS_MotivoDePausa[]
+  fiscais          RDS_Fiscal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contrato {
+  id        String   @id @default(uuid())  
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  empresaId String
+  descricao String
+  ativo     Boolean  @default(true)
+
+  rds       RDS[]
+}
+
+model Empresa {
+  id     String    @id @default(uuid())  
+  nome   String
+  contratos Contrato[]
+}
+
+model Servico {
+  id                String       @id @default(uuid())  
+  nome             String
+  classificacaoArvore String?
+  observacao       String?
+  descricao        String
+  rds             RDS_Servico[]
+  atividades      Servico_Atividade[]
+}
+
+model Atividade {
+  id                String        @id @default(uuid())  
+  nome             String
+  classificacaoArvore String?
+  observacao       String?
+  descricao        String
+  rds             RDS_Atividade[]
+  servicos        Servico_Atividade[]
+}
+
+model MaoDeObra {
+  id        String        @id @default(uuid())  
+  nome      String
+  descricao String
+  rds       RDS_MaoDeObra[]
+}
+
+model Equipamento {
+  id                String        @id @default(uuid())  
+  nome             String
+  classificacaoArvore String?
+  observacao       String?
+  tipo             String?
+  descricao        String
+  rds             RDS_Equipamento[]
+}
+
+model MotivoDePausa {
+  id        String          @id @default(uuid())  
+  nome      String
+  tipo      String
+  descricao String
+  rds       RDS_MotivoDePausa[]
+}
+
+model Encarregado {
+  id   String @id @default(uuid())  
+  nome String
+  rds  RDS[]
+}
+
+model Fiscal {
+  id   String @id @default(uuid())  
+  nome String
+  rds  RDS_Fiscal[]
+}
+
+// TABELAS DE RELACIONAMENTO
+
+model RDS_Servico {
+  rdsId      String
+  servicoId  String
+  rds        RDS      @relation(fields: [rdsId], references: [id])
+  servico    Servico  @relation(fields: [servicoId], references: [id])
+
+  @@id([rdsId, servicoId])
+}
+
+model RDS_Atividade {
+  rdsId       String
+  atividadeId String
+  rds         RDS       @relation(fields: [rdsId], references: [id])
+  atividade   Atividade @relation(fields: [atividadeId], references: [id])
+
+  @@id([rdsId, atividadeId])
+}
+
+model RDS_MaoDeObra {
+  rdsId     String
+  maoDeObraId String
+  rds       RDS       @relation(fields: [rdsId], references: [id])
+  maoDeObra MaoDeObra @relation(fields: [maoDeObraId], references: [id])
+
+  @@id([rdsId, maoDeObraId])
+}
+
+model RDS_Equipamento {
+  rdsId        String
+  equipamentoId String
+  rds          RDS         @relation(fields: [rdsId], references: [id])
+  equipamento  Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  @@id([rdsId, equipamentoId])
+}
+
+model RDS_MotivoDePausa {
+  rdsId         String
+  motivoPausaId String
+  rds           RDS            @relation(fields: [rdsId], references: [id])
+  motivoPausa   MotivoDePausa  @relation(fields: [motivoPausaId], references: [id])
+
+  @@id([rdsId, motivoPausaId])
+}
+
+model RDS_Fiscal {
+  rdsId    String
+  fiscalId String
+  rds      RDS      @relation(fields: [rdsId], references: [id])
+  fiscal   Fiscal   @relation(fields: [fiscalId], references: [id])
+
+  @@id([rdsId, fiscalId])
+}
+
+model Servico_Atividade {
+  servicoId   String
+  atividadeId String
+  ativo       Boolean  @default(true)
+  
+  servico     Servico    @relation(fields: [servicoId], references: [id])
+  atividade   Atividade  @relation(fields: [atividadeId], references: [id])
+
+  @@id([servicoId, atividadeId])
+}
+
