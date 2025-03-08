@@ -5,6 +5,10 @@ import servicoRoutes from './routes/servicoRoutes';
 import maodeobraRoutes from './routes/maodeobraRoutes';
 import motivodepausaRoutes from './routes/motivodepausaRoutes';
 import contratoRoutes from './routes/contratoRoutes';
+import empresaRoutes from './routes/empresaRoutes';
+import RDOSRoutes from './routes/RDOSRoutes';
+import encarregadoRoutes from './routes/encarregadoRoutes';
+import equipamentoRoutes from './routes/equipamentoRoutes';
 dotenv.config();
 
 
@@ -23,7 +27,14 @@ app.use('/api', maodeobraRoutes);  // As rotas de mãos de obra estarão dispon�
 app.use('/api', motivodepausaRoutes);  // As rotas de motivos de pausa estarão disponíveis em /api/motivos-de-pausa
 // Definindo o caminho base para as rotas de contratos
 app.use('/api', contratoRoutes);  // As rotas de contratos estarão disponíveis em /api/contratos
-
+// Definindo o caminho base para as rotas de empresas
+app.use('/api', empresaRoutes);  // As rotas de empresas estarão disponíveis em /api/empresas
+// Definindo o caminho base para as rotas de RDOS
+app.use('/api', RDOSRoutes);  // As rotas de RDOS estarão disponíveis em /api/rdos
+// Definindo o caminho base para as rotas de encarregados
+app.use('/api', encarregadoRoutes);  // As rotas de encarregados estarão disponíveis em /api/encarregados
+// Definindo o caminho base para as rotas de equipamentos
+app.use('/api', equipamentoRoutes);  // As rotas de equipamentos estarão disponíveis em /api/equipamentos
 
 // Configuração de porta
 const PORT = process.env.PORT || 3000;

@@ -4,3 +4,4 @@ node_modules
 # Node.js
 prisma/migrations/
 dist/
+*.txt
