@@ -43,6 +43,7 @@ model Contrato {
   empresaId String
   descricao String
   ativo     Boolean  @default(true)
+  numeroDoContrato String
 
   rds       RDS[]
 }
