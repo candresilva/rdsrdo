@@ -1,5 +1,8 @@
 import express from 'express';
 import atividadeRoutes from './routes/atividadeRoutes';  // Importando as rotas de atividade
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const app = express();
 

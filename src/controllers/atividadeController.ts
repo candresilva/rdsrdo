@@ -1,45 +1,87 @@
-import { Request, Response } from 'express';
-import { AtividadeService } from '../services/AtividadeService';
+import { Request, Response, NextFunction } from 'express';
+import { AtividadeService } from '../services/atividadeService';
 
 export class AtividadeController {
-  private readonly atividadeService: AtividadeService;
+  private static instance: AtividadeController;
+  private atividadeService: AtividadeService;
 
-  constructor() {
+  private constructor() {
+    console.log('Inicializando AtividadeService...');
     this.atividadeService = new AtividadeService();
+    console.log('AtividadeService inicializado:', this.atividadeService);
   }
 
-  async getAll(req: Request, res: Response): Promise<Response> {
+  public static getInstance(): AtividadeController {
+    if (!AtividadeController.instance) {
+      console.log('Instanciando AtividadeController...');
+      AtividadeController.instance = new AtividadeController();
+    }
+    else {
+      console.log('Instância já criada');
+    }
+    return AtividadeController.instance;
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log('Instância do AtividadeController:', this);
+      console.log('AtividadeService:', this.atividadeService);
+  
+      if (!this.atividadeService) {
+        throw new Error('AtividadeService não foi inicializado corretamente.');
+      }
     const atividades =  await this.atividadeService.listar();
-    return res.json(atividades);
+    res.json(atividades);
+  } catch (err:any) {
+    console.error('Erro ao listar atividades:', err);
+    res.status(500).json({ message: err.message });
+    next(err);
+  }
   }
 
-  async getById(req: Request, res: Response): Promise<Response> {
+  async getById(req: Request, res: Response) {
     const { id } = req.params;
+    try {
     const atividade = await this.atividadeService.obterPorId(id);
     if (!atividade) {
-      return res.status(404).json({ message: 'Atividade não encontrada' });
+      res.status(404).json({ message: 'Atividade não encontrada' });
     }
-    return res.json(atividade);
+    res.json(atividade);
+  } catch (err:any) {
+    console.error('Erro ao buscar atividade por ID:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar atividade por ID', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar atividade por ID' });
+    }
   }
+}
 
-  async create(req: Request, res: Response): Promise<Response> {
+
+  async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log('Corpo da requisição recebido:', req.body);
+      console.log('AtividadeService antes de criar:', this.atividadeService);
     const atividade = await this.atividadeService.criar(req.body);
-    return res.status(201).json(atividade);
+    res.status(201).json(atividade);
+  } catch(err:any) {
+    next(err);
   }
+}
 
-  async update(req: Request, res: Response): Promise<Response> {
+  async update(req: Request, res: Response) {
     const { id } = req.params;
     const atividade = await this.atividadeService.atualizar(id, req.body);
     if (!atividade) {
-      return res.status(404).json({ message: 'Atividade não encontrada' });
+      res.status(404).json({ message: 'Atividade não encontrada' });
     }
-    return res.json(atividade);
+    res.json(atividade);
   }
 
-  async delete(req: Request, res: Response): Promise<Response> {
+  async delete(req: Request, res: Response) {
     const { id } = req.params;
     await this.atividadeService.remover(id);
-    return res.status(204).send();
+    res.status(204).send();
   }
 }
 

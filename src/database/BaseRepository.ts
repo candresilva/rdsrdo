@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from '@prisma/client'; 
 
-export class BaseRepository<T> {
+export class BaseRepository<T extends { findMany: Function; findUnique: Function; create: Function; update: Function; delete: Function }> {
   protected model: T;
 
   constructor(model: T) {
@@ -9,23 +9,23 @@ export class BaseRepository<T> {
 
   // Operações CRUD genéricas
   async findAll() {
-    return (this.model as any).findMany();
+    return this.model.findMany();
   }
 
   async findById(id: string) {
-    return (this.model as any).findUnique({ where: { id } });
+    return this.model.findUnique({ where: { id } });
   }
 
   async create(data: any) {
-    return (this.model as any).create({ data });
+    return this.model.create({ data });
   }
 
   async update(id: string, data: any) {
-    return (this.model as any).update({ where: { id }, data });
+    return this.model.update({ where: { id }, data });
   }
 
   async delete(id: string) {
-    return (this.model as any).delete({ where: { id } });
+    return this.model.delete({ where: { id } });
   }
 }
 
