@@ -83,6 +83,37 @@ export class ServicoController {
     await this.servicoService.remover(id);
     res.status(204).send();
   }
+
+  async assignActivity(req: Request, res: Response) {
+    try {
+      console.log("params",req.params);
+        const { servicoId, atividadeId } = req.params;
+
+        // Chama o serviço para processar a associação
+        const resultado = await this.servicoService.associarAtividade(servicoId, atividadeId);
+
+        res.status(200).json({ message: resultado });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+async toggleStatusAtividade(req: Request, res: Response) {
+  try {
+    const { servicoId, atividadeId } = req.params;
+
+    // Chama o serviço para alternar o status da atividade
+    const resultado = await this.servicoService.toggleStatus(servicoId, atividadeId);
+
+    if (resultado) {
+      res.status(200).json({ message: 'Status atualizado com sucesso', status: resultado });
+    } else {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
 }
 
 //export default new ServicoController();

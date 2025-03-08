@@ -73,6 +73,37 @@ export class ServicoService {
   async remover(id: string) {
     await this.servicoRepository.delete(id);
   }
+
+  async associarAtividade(servicoId: string, atividadeId: string) {
+    // Verifica se a atividade já está associada ao serviço
+    const existente = await this.servicoRepository.buscarAssociacao(servicoId, atividadeId);
+
+    if (existente) {
+        throw new Error('A atividade já está associada a este serviço.');
+    }
+
+    // Associa a atividade ao serviço
+    await this.servicoRepository.criarAssociacao(servicoId, atividadeId);
+
+    return 'Atividade associada com sucesso!';
+};
+
+async toggleStatus(servicoId: string, atividadeId: string) {
+  // Busca a associação da atividade com o serviço
+  const associacao = await this.servicoRepository.findByServicoAndAtividade(servicoId, atividadeId);
+
+  if (associacao) {
+    // Alterna o status da associação (ativo <=> inativo)
+    const novoStatus = !associacao.ativo;
+    
+    // Atualiza a associação com o novo status
+    const resultado = await this.servicoRepository.updateStatus(servicoId, atividadeId, novoStatus);
+    
+    return resultado;  // Retorna o novo status da associação
+  } else {
+    return null;  // Caso não exista a associação
+  }
+}
 }
 
 export default new ServicoService();
