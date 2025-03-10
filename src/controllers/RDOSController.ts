@@ -83,6 +83,101 @@ export class RDOSController {
     await this.rdosService.remover(id);
     res.status(204).send();
   }
+
+
+  // RDOS_Servico --------------------------------------------
+
+  async assignService(req: Request, res: Response) {
+    try {
+      console.log("params",req.params);
+        const { rdosId, servicoId } = req.params;
+
+        const resultado = await this.rdosService.associarServico(rdosId,servicoId);
+
+        res.status(200).json({ message: resultado });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+async unassignService(req: Request, res: Response) {
+  const {rdosId,servicoId } = req.params;
+  await this.rdosService.removerServico(rdosId,servicoId);
+  res.status(204).send();
+}
+
+
+async getServicesByRDOSId(req: Request, res: Response) {
+  try {
+    const { rdosId } = req.params;
+    const associacao = await this.rdosService.buscarServicos(rdosId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+async getAssociations(req: Request, res: Response) {
+  try{
+  const servicos =  await this.rdosService.buscarAssociacoes();
+  res.json(servicos);
+} catch (err:any) {
+    console.error('Erro ao listar servicos:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
+// RDOS_Atividade --------------------------------------------
+async assignAtividade(req: Request, res: Response) {
+  try {
+    console.log("params",req.params);
+      const { rdosId, atividadeId } = req.params;
+
+      const resultado = await this.rdosService.associarAtividade(rdosId, atividadeId);
+
+      res.status(200).json({ message: resultado });
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+async unassignAtividade(req: Request, res: Response) {
+const {rdosId, atividadeId } = req.params;
+await this.rdosService.removerAtividade(rdosId, atividadeId);
+res.status(204).send();
+}
+
+
+async getActivitiesByRDOSId(req: Request, res: Response) {
+try {
+  const { rdosId } = req.params;
+  const associacao = await this.rdosService.buscarAtividades(rdosId);
+
+  if (!associacao) {
+    res.status(404).json({ message: 'Associação não encontrada' });
+  }
+
+  res.json(associacao);
+} catch (error: any) {
+  res.status(500).json({ error: error.message });
+}
+}
+async getAssociationsAtividade(req: Request, res: Response) {
+try{
+const servicos =  await this.rdosService.buscarAssociacoesAtividades();
+res.json(servicos);
+} catch (err:any) {
+  console.error('Erro ao listar servicos:', err);
+  res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
 }
 
 //export default new RDOSController();

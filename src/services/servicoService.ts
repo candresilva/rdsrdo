@@ -33,16 +33,6 @@ export class ServicoService {
     }
   }
 
-  /* async criar(dados: Partial<Servico>) {
-    try{
-      console.log('Dados recebidos para criação:', dados);
-      const servico = await this.servicoRepository.create(dados);
-      return servico;
-  } catch(error:any) {
-    throw new Error('Erro ao criar serviço: ' + error.message);
-
-  }
-    } */
 
     async criar(dados: Partial<Servico> | Partial<Servico>[]) {
       try {
@@ -104,6 +94,13 @@ async toggleStatus(servicoId: string, atividadeId: string) {
     return null;  // Caso não exista a associação
   }
 }
+async buscarAtividades(servicoId: string) {
+  return this.servicoRepository.findByServico(servicoId);
+}
+async buscarAssociacoes() {
+  return this.servicoRepository.findAssociations();
+}
+
 }
 
 export default new ServicoService();

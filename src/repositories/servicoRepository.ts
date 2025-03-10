@@ -50,5 +50,17 @@ async updateStatus(servicoId: string, atividadeId: string, novoStatus: boolean) 
     }
   });
 }
+async findByServico(servicoId: string) {
+  return prisma.servico_Atividade.findMany({
+    where: {
+        servicoId      }
+  });
+
+}
+async findAssociations() {
+  return prisma.servico_Atividade.findMany();
+}
+
+
 }
 

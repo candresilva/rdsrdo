@@ -32,6 +32,7 @@ model RDOS {
   equipamentos     RDOS_Equipamento[]
   motivosDePausa   RDOS_MotivoDePausa[]
   fiscais          RDOS_Fiscal[]
+  servicosAtividades RDOS_ServicoAtividade[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,6 +69,8 @@ model Servico {
   descricao        String
   rdos             RDOS_Servico[]
   atividades      Servico_Atividade[]
+  rdosServicosAtividades RDOS_ServicoAtividade[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -80,6 +83,8 @@ model Atividade {
   descricao        String
   rdos             RDOS_Atividade[]
   servicos        Servico_Atividade[]
+  rdosServicosAtividades RDOS_ServicoAtividade[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
 }
@@ -206,6 +211,21 @@ model RDOS_Fiscal {
   updatedAt DateTime @updatedAt
 }
 
+model RDOS_ServicoAtividade {
+  rdosId      String
+  servicoId   String
+  atividadeId String
+
+  rdos        RDOS      @relation(fields: [rdosId], references: [id])
+  servico     Servico   @relation(fields: [servicoId], references: [id])
+  atividade   Atividade @relation(fields: [atividadeId], references: [id])
+
+  @@id([rdosId, servicoId, atividadeId])
+    createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+}
+
 model Servico_Atividade {
   servicoId   String
   atividadeId String
@@ -219,4 +239,6 @@ model Servico_Atividade {
     createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+
 

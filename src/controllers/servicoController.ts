@@ -114,6 +114,46 @@ async toggleStatusAtividade(req: Request, res: Response) {
     res.status(500).json({ error: error.message });
   }
 }
+
+async getActivitiesByServiceId(req: Request, res: Response) {
+  try {
+    const { servicoId } = req.params;
+    const associacao = await this.servicoService.buscarAtividades(servicoId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+async getAssociations(req: Request, res: Response) {
+  try{
+  const servicos =  await this.servicoService.buscarAssociacoes();
+  res.json(servicos);
+} catch (err:any) {
+    console.error('Erro ao listar servicos:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
+/* async getAssociations(req: Request, res: Response) {
+  try {
+    const { servicoId, atividadeId } = req.params;
+    const associacao = await this.servicoService.buscarAssociacao(servicoId, atividadeId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+ }*/
 }
 
 //export default new ServicoController();

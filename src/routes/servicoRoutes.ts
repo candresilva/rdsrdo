@@ -12,14 +12,20 @@ router.get('/v1/listar/servicos/:id', servicocontroller.getById.bind(servicocont
 router.post('/v1/criar/servicos', servicocontroller.create.bind(servicocontroller));  // Rota para criar um novo serviço
 router.put('/v1/editar/servicos/:id', servicocontroller.update.bind(servicocontroller));  // Rota para atualizar um serviço
 router.delete('/v1/excluir/servicos/:id', servicocontroller.delete.bind(servicocontroller));  // Rota para excluir um serviço
-// Rota para associar uma atividade a um serviço
+
+// Rotas de serviços_atividades
+// Associar atividade a serviço
 router.post('/v1/associar/servicos/:servicoId/atividades/:atividadeId', (req, res, next) => {
     console.log('Rota de associação de atividade acessada');
     next();  // Chama o próximo middleware (o controlador)
 }, servicocontroller.assignActivity.bind(servicocontroller));
-// Rota para alternar status da associação entre uma atividade e um serviço
+// Alternar status da associação atividade x serviço
 router.patch('/v1/associar/servicos/:servicoId/atividades/:atividadeId/alterar-status', 
     servicocontroller.toggleStatusAtividade.bind(servicocontroller));
+// Buscar atividades de um serviço
+router.get('/v1/associar/servicos/:servicoId/atividades/',servicocontroller.getActivitiesByServiceId.bind(servicocontroller))
+// Buscar associações atividade x serviço
+router.get('/v1/associar/servicos/atividades/',servicocontroller.getAssociations.bind(servicocontroller))
 
 
 export default router;

@@ -73,6 +73,66 @@ export class RDOSService {
   async remover(id: string) {
     await this.rdosRepository.delete(id);
   }
+
+  // RDOS_Servico --------------------------------------------
+
+  async associarServico(rdosId:string, servicoId: string) {
+    // Verifica se o serviço já está associado à RDOS
+    const existente = await this.rdosRepository.findByRDOSAndServico(rdosId,servicoId);
+
+    if (existente) {
+        throw new Error('O serviço já está associado a este RDOS.');
+    }
+
+    // Associa o serviço à RDOS
+    await this.rdosRepository.criarAssociacao(rdosId,servicoId);
+    // Chama a função que associa as atividades do serviço ao RDO
+    const resultadoAtividades = await this.rdosRepository.associarRDOSServicoComAtividades(rdosId, servicoId);
+
+    return {      
+      message: 'Serviço associado com sucesso!',
+      atividades: resultadoAtividades
+    };
+  }
+async removerServico(rdosId: string, servicoId: string) {
+  await this.rdosRepository.excluirAssociacao(rdosId,servicoId);
+}
+
+async buscarServicos(rdosId: string) {
+  return this.rdosRepository.findByRDOS(rdosId);
+}
+async buscarAssociacoes() {
+  return this.rdosRepository.findAssociations();
+}
+
+// RDOS_Atividade --------------------------------------------
+
+async associarAtividade(rdosId:string, atividadeId: string) {
+  // Verifica se o serviço já está associado à RDOS
+  const existente = await this.rdosRepository.findByRDOSAndAtividade(rdosId,atividadeId);
+
+  if (existente) {
+      throw new Error('A atividade já está associada a este RDOS.');
+  }
+
+  // Associa a atividade ao serviço
+  await this.rdosRepository.criarAssociacaoAtividade(rdosId,atividadeId);
+
+  return 'Atividade associada com sucesso!';
+};
+
+async removerAtividade(rdosId: string, atividadeId: string) {
+await this.rdosRepository.excluirAssociacaoAtividade(rdosId, atividadeId);
+}
+
+async buscarAtividades(rdosId: string) {
+return this.rdosRepository.findAtividadeByRDOS(rdosId);
+}
+async buscarAssociacoesAtividades() {
+return this.rdosRepository.findAssociationsAtividades();
+}
+
+
 }
 
 export default new RDOSService();
