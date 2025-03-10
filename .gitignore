@@ -5,3 +5,5 @@ node_modules
 prisma/migrations/
 dist/
 *.txt
+*.docx
+*.png
