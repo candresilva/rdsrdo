@@ -55,8 +55,7 @@ export class ServicoController {
       res.status(500).json({ message: 'Erro desconhecido ao buscar serviço por ID' });
     }
   }
-}
-
+  }
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -67,7 +66,7 @@ export class ServicoController {
   } catch(err:any) {
     next(err);
   }
-}
+  }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
@@ -96,64 +95,51 @@ export class ServicoController {
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
-};
+  };
 
-async toggleStatusAtividade(req: Request, res: Response) {
-  try {
-    const { servicoId, atividadeId } = req.params;
+  async toggleStatusAtividade(req: Request, res: Response) {
+    try {
+      const { servicoId, atividadeId } = req.params;
 
-    // Chama o serviço para alternar o status da atividade
-    const resultado = await this.servicoService.toggleStatus(servicoId, atividadeId);
+      // Chama o serviço para alternar o status da atividade
+      const resultado = await this.servicoService.toggleStatus(servicoId, atividadeId);
 
-    if (resultado) {
-      res.status(200).json({ message: 'Status atualizado com sucesso', status: resultado });
-    } else {
-      res.status(404).json({ message: 'Associação não encontrada' });
+      if (resultado) {
+        res.status(200).json({ message: 'Status atualizado com sucesso', status: resultado });
+      } else {
+        res.status(404).json({ message: 'Associação não encontrada' });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
   }
-}
 
-async getActivitiesByServiceId(req: Request, res: Response) {
-  try {
-    const { servicoId } = req.params;
-    const associacao = await this.servicoService.buscarAtividades(servicoId);
+  async getActivitiesByServiceId(req: Request, res: Response) {
+    try {
+      const { servicoId } = req.params;
+      const associacao = await this.servicoService.buscarAtividades(servicoId);
 
-    if (!associacao) {
-      res.status(404).json({ message: 'Associação não encontrada' });
+      if (!associacao) {
+        res.status(404).json({ message: 'Associação não encontrada' });
+      }
+
+      res.json(associacao);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-
-    res.json(associacao);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
   }
-}
-async getAssociations(req: Request, res: Response) {
-  try{
-  const servicos =  await this.servicoService.buscarAssociacoes();
-  res.json(servicos);
-} catch (err:any) {
-    console.error('Erro ao listar servicos:', err);
-    res.status(500).json({ message: err.message });
-//    next(err);
-}
-}
 
-/* async getAssociations(req: Request, res: Response) {
-  try {
-    const { servicoId, atividadeId } = req.params;
-    const associacao = await this.servicoService.buscarAssociacao(servicoId, atividadeId);
-
-    if (!associacao) {
-      res.status(404).json({ message: 'Associação não encontrada' });
-    }
-
-    res.json(associacao);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  async getAssociations(req: Request, res: Response) {
+    try{
+    const servicos =  await this.servicoService.buscarAssociacoes();
+    res.json(servicos);
+  } catch (err:any) {
+      console.error('Erro ao listar servicos:', err);
+      res.status(500).json({ message: err.message });
+  //    next(err);
   }
- }*/
+  }
+
 }
 
 //export default new ServicoController();

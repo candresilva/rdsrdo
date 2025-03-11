@@ -84,10 +84,9 @@ export class RDOSController {
     res.status(204).send();
   }
 
+// RDOS_Servico --------------------------------------------
 
-  // RDOS_Servico --------------------------------------------
-
-  async assignService(req: Request, res: Response) {
+async assignService(req: Request, res: Response) {
     try {
       console.log("params",req.params);
         const { rdosId, servicoId } = req.params;
@@ -106,7 +105,6 @@ async unassignService(req: Request, res: Response) {
   res.status(204).send();
 }
 
-
 async getServicesByRDOSId(req: Request, res: Response) {
   try {
     const { rdosId } = req.params;
@@ -121,6 +119,7 @@ async getServicesByRDOSId(req: Request, res: Response) {
     res.status(500).json({ error: error.message });
   }
 }
+
 async getAssociations(req: Request, res: Response) {
   try{
   const servicos =  await this.rdosService.buscarAssociacoes();
@@ -133,6 +132,7 @@ async getAssociations(req: Request, res: Response) {
 }
 
 // RDOS_Atividade --------------------------------------------
+
 async assignAtividade(req: Request, res: Response) {
   try {
     console.log("params",req.params);
@@ -152,7 +152,6 @@ await this.rdosService.removerAtividade(rdosId, atividadeId);
 res.status(204).send();
 }
 
-
 async getActivitiesByRDOSId(req: Request, res: Response) {
 try {
   const { rdosId } = req.params;
@@ -167,6 +166,7 @@ try {
   res.status(500).json({ error: error.message });
 }
 }
+
 async getAssociationsAtividade(req: Request, res: Response) {
 try{
 const servicos =  await this.rdosService.buscarAssociacoesAtividades();
@@ -176,6 +176,183 @@ res.json(servicos);
   res.status(500).json({ message: err.message });
 //    next(err);
 }
+}
+
+async updateAtividade(req: Request, res: Response) {
+  const { rdosId, atividadeId } = req.params;
+  const rdos = await this.rdosService.atualizarAtividades(rdosId, atividadeId, req.body);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+}
+
+// RDOS_Equipamento  --------------------------------------------
+
+async assignEquipment(req: Request, res: Response) {
+  try {
+    console.log("params",req.params);
+      const { rdosId, equipamentoId } = req.params;
+
+      const resultado = await this.rdosService.associarEquipamento(rdosId, equipamentoId);
+
+      res.status(200).json({ message: resultado });
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+async unassignEquipment(req: Request, res: Response) {
+  const {rdosId, equipamentoId } = req.params;
+  await this.rdosService.removerEquipamento(rdosId, equipamentoId);
+  res.status(204).send();
+}
+
+async getEquipmentsByRDOSId(req: Request, res: Response) {
+  try {
+    const { rdosId } = req.params;
+    const associacao = await this.rdosService.buscarEquipamentos(rdosId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+async getAssociationsEquipment(req: Request, res: Response) {
+  try{
+  const equipamentos =  await this.rdosService.buscarAssociacoesEquipamentos();
+  res.json(equipamentos);
+} catch (err:any) {
+    console.error('Erro ao listar servicos:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
+async updateEquipment(req: Request, res: Response) {
+  const { rdosId, equipamentoId } = req.params;
+  const rdos = await this.rdosService.atualizarEquipamentos(rdosId, equipamentoId, req.body);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+}
+
+// RDOS_MãodeObra  --------------------------------------------
+
+async assignWorkforce(req: Request, res: Response) {
+  try {
+    console.log("params",req.params);
+      const { rdosId, maoDeObraId } = req.params;
+
+      const resultado = await this.rdosService.associarMaodeObra(rdosId, maoDeObraId);
+
+      res.status(200).json({ message: resultado });
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+async unassignWorkforce(req: Request, res: Response) {
+  const {rdosId, maoDeObraId } = req.params;
+  await this.rdosService.removerMaodeObra(rdosId, maoDeObraId);
+  res.status(204).send();
+}
+
+async getWorkforceByRDOSId(req: Request, res: Response) {
+  try {
+    const { rdosId } = req.params;
+    const associacao = await this.rdosService.buscarMaodeObra(rdosId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+async getAssociationsWorkforce(req: Request, res: Response) {
+  try{
+  const workforce =  await this.rdosService.buscarAssociacoesMaodeObra();
+  res.json(workforce);
+} catch (err:any) {
+    console.error('Erro ao listar servicos:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
+async updateWorforce(req: Request, res: Response) {
+  const { rdosId, maoDeObraId } = req.params;
+  const rdos = await this.rdosService.atualizarMaodeObra(rdosId, maoDeObraId, req.body);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+}
+
+// RDOS_Motivo  --------------------------------------------
+
+async assignBreak(req: Request, res: Response) {
+  try {
+    console.log("params",req.params);
+      const { rdosId, motivoPausaId } = req.params;
+
+      const pausa = await this.rdosService.associarMotivos(rdosId, motivoPausaId);
+
+      res.status(200).json({ message: pausa });
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+async unassignBreak(req: Request, res: Response) {
+  const {rdosId, motivoPausaId } = req.params;
+  await this.rdosService.removerMotivo(rdosId, motivoPausaId);
+  res.status(204).send();
+}
+
+async getBreaksByRDOSId(req: Request, res: Response) {
+  try {
+    const { rdosId } = req.params;
+    const associacao = await this.rdosService.buscarMotivo(rdosId);
+
+    if (!associacao) {
+      res.status(404).json({ message: 'Associação não encontrada' });
+    }
+
+    res.json(associacao);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+async getAssociationsBreak(req: Request, res: Response) {
+  try{
+  const pausa =  await this.rdosService.buscarAssociacoesMotivo();
+  res.json(pausa);
+} catch (err:any) {
+    console.error('Erro ao listar pausas:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
+}
+}
+
+async updateBreaks(req: Request, res: Response) {
+  const { rdosId, motivoPausaId } = req.params;
+  const rdos = await this.rdosService.atualizarMotivo(rdosId, motivoPausaId, req.body);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
 }
 
 }

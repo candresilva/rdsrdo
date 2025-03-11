@@ -5,5 +5,13 @@ export class ContratoRepository extends BaseRepository<typeof prisma.contrato> {
   constructor() {
     super(prisma.contrato);  // Passando o modelo correto para o BaseRepository
   }
+
+  async findByEmpresa(empresaId: string) {
+    console.log("Filtrando contratos por empresaId:", empresaId);
+    return prisma.contrato.findMany({
+      where: { empresaId: { equals: empresaId } }
+    });
+  }
+  
 }
 

@@ -26,6 +26,7 @@ async criarAssociacao(servicoId: string, atividadeId: string) {
         },
     });
 };
+
 async findByServicoAndAtividade(servicoId: string, atividadeId: string) {
   return prisma.servico_Atividade.findUnique({
     where: {
@@ -50,6 +51,7 @@ async updateStatus(servicoId: string, atividadeId: string, novoStatus: boolean) 
     }
   });
 }
+
 async findByServico(servicoId: string) {
   return prisma.servico_Atividade.findMany({
     where: {
@@ -57,6 +59,7 @@ async findByServico(servicoId: string) {
   });
 
 }
+
 async findAssociations() {
   return prisma.servico_Atividade.findMany();
 }

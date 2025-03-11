@@ -55,8 +55,7 @@ export class ContratoController {
       res.status(500).json({ message: 'Erro desconhecido ao buscar contrato por ID' });
     }
   }
-}
-
+  }
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -67,7 +66,7 @@ export class ContratoController {
   } catch(err:any) {
     next(err);
   }
-}
+  }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
@@ -83,6 +82,25 @@ export class ContratoController {
     await this.contratoService.remover(id);
     res.status(204).send();
   }
+
+  async getByEmpresaId(req: Request, res: Response) {
+    const { empresaId } = req.params;
+    try {
+    const contrato = await this.contratoService.obterPorEmpresa(empresaId);
+    if (!contrato) {
+      res.status(404).json({ message: 'Contrato não encontrado' });
+    }
+    res.json(contrato);
+  } catch (err:any) {
+    console.error('Erro ao buscar contratos por empresa:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar contratos por empresa', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar contratos por empresa' });
+    }
+  }
+  }
+
 }
 
 //export default new ContratoController();

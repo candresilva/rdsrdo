@@ -7,3 +7,4 @@ dist/
 *.txt
 *.docx
 *.png
+.gitignore

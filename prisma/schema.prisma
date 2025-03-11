@@ -147,55 +147,62 @@ model RDOS_Servico {
 
   @@id([rdosId, servicoId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model RDOS_Atividade {
   rdosId       String
   atividadeId String
+  dataHoraInicio  DateTime?
+  dataHoraFim  DateTime?
   rdos         RDOS       @relation(fields: [rdosId], references: [id])
   atividade   Atividade @relation(fields: [atividadeId], references: [id])
 
   @@id([rdosId, atividadeId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model RDOS_MaoDeObra {
   rdosId     String
   maoDeObraId String
+  quantidade    Int?
   rdos       RDOS       @relation(fields: [rdosId], references: [id])
   maoDeObra MaoDeObra @relation(fields: [maoDeObraId], references: [id])
 
   @@id([rdosId, maoDeObraId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model RDOS_Equipamento {
   rdosId        String
   equipamentoId String
+  quantidade    Int?
   rdos          RDOS         @relation(fields: [rdosId], references: [id])
   equipamento  Equipamento @relation(fields: [equipamentoId], references: [id])
 
   @@id([rdosId, equipamentoId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model RDOS_MotivoDePausa {
   rdosId         String
   motivoPausaId String
+  dataHoraInicio  DateTime?
+  dataHoraFim  DateTime?
+
   rdos           RDOS            @relation(fields: [rdosId], references: [id])
   motivoPausa   MotivoDePausa  @relation(fields: [motivoPausaId], references: [id])
 
   @@id([rdosId, motivoPausaId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -207,7 +214,7 @@ model RDOS_Fiscal {
 
   @@id([rdosId, fiscalId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -215,13 +222,15 @@ model RDOS_ServicoAtividade {
   rdosId      String
   servicoId   String
   atividadeId String
+  dataHoraInicio  DateTime?
+  dataHoraFim  DateTime?
 
   rdos        RDOS      @relation(fields: [rdosId], references: [id])
   servico     Servico   @relation(fields: [servicoId], references: [id])
   atividade   Atividade @relation(fields: [atividadeId], references: [id])
 
   @@id([rdosId, servicoId, atividadeId])
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
 }
@@ -236,7 +245,7 @@ model Servico_Atividade {
 
   @@id([servicoId, atividadeId])
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 

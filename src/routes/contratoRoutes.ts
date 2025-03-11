@@ -12,5 +12,6 @@ router.get('/v1/listar/contratos/:id', contratocontroller.getById.bind(contratoc
 router.post('/v1/criar/contratos', contratocontroller.create.bind(contratocontroller));  // Rota para criar um novo contrato
 router.put('/v1/editar/contratos/:id', contratocontroller.update.bind(contratocontroller));  // Rota para atualizar um contrato
 router.delete('/v1/excluir/contratos/:id', contratocontroller.delete.bind(contratocontroller));  // Rota para excluir um contrato
+router.get('/v1/listar/contratos/empresa/:empresaId', contratocontroller.getByEmpresaId.bind(contratocontroller));  // Rota para buscar contratos por empresa
 
 export default router;

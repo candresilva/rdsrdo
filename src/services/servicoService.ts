@@ -19,7 +19,6 @@ export class ServicoService {
         }
   }
 
-
   async obterPorId(id: string) {
     try {
       const servico = await this.servicoRepository.findById(id);
@@ -33,29 +32,26 @@ export class ServicoService {
     }
   }
 
-
-    async criar(dados: Partial<Servico> | Partial<Servico>[]) {
-      try {
-        console.log('Dados recebidos para criação:', dados);
-    
-        if (Array.isArray(dados)) {
-          // Criando múltiplos serviços um por um
-          const servicosCriados = [];
-          for (const servico of dados) {
-            servicosCriados.push(await this.servicoRepository.create(servico));
-          }
-          return servicosCriados; // Retorna um array de serviços criados
-        }
-    
-        // Criando um único serviço
-        return await this.servicoRepository.create(dados);
-      } catch (error: any) {
-        throw new Error('Erro ao criar serviço: ' + error.message);
-      }
-    }
-    
+  async criar(dados: Partial<Servico> | Partial<Servico>[]) {
+    try {
+      console.log('Dados recebidos para criação:', dados);
   
-
+      if (Array.isArray(dados)) {
+        // Criando múltiplos serviços um por um
+        const servicosCriados = [];
+        for (const servico of dados) {
+          servicosCriados.push(await this.servicoRepository.create(servico));
+        }
+        return servicosCriados; // Retorna um array de serviços criados
+      }
+  
+      // Criando um único serviço
+      return await this.servicoRepository.create(dados);
+    } catch (error: any) {
+      throw new Error('Erro ao criar serviço: ' + error.message);
+    }
+  }
+  
   async atualizar(id: string, dados: Partial<Servico>) {
     return await this.servicoRepository.update(id, dados);
   }
@@ -76,30 +72,32 @@ export class ServicoService {
     await this.servicoRepository.criarAssociacao(servicoId, atividadeId);
 
     return 'Atividade associada com sucesso!';
-};
+  };
 
-async toggleStatus(servicoId: string, atividadeId: string) {
-  // Busca a associação da atividade com o serviço
-  const associacao = await this.servicoRepository.findByServicoAndAtividade(servicoId, atividadeId);
+  async toggleStatus(servicoId: string, atividadeId: string) {
+    // Busca a associação da atividade com o serviço
+    const associacao = await this.servicoRepository.findByServicoAndAtividade(servicoId, atividadeId);
 
-  if (associacao) {
-    // Alterna o status da associação (ativo <=> inativo)
-    const novoStatus = !associacao.ativo;
-    
-    // Atualiza a associação com o novo status
-    const resultado = await this.servicoRepository.updateStatus(servicoId, atividadeId, novoStatus);
-    
-    return resultado;  // Retorna o novo status da associação
-  } else {
-    return null;  // Caso não exista a associação
+    if (associacao) {
+      // Alterna o status da associação (ativo <=> inativo)
+      const novoStatus = !associacao.ativo;
+      
+      // Atualiza a associação com o novo status
+      const resultado = await this.servicoRepository.updateStatus(servicoId, atividadeId, novoStatus);
+      
+      return resultado;  // Retorna o novo status da associação
+    } else {
+      return null;  // Caso não exista a associação
+    }
   }
-}
-async buscarAtividades(servicoId: string) {
-  return this.servicoRepository.findByServico(servicoId);
-}
-async buscarAssociacoes() {
-  return this.servicoRepository.findAssociations();
-}
+
+  async buscarAtividades(servicoId: string) {
+    return this.servicoRepository.findByServico(servicoId);
+  }
+  
+  async buscarAssociacoes() {
+    return this.servicoRepository.findAssociations();
+  }
 
 }
 

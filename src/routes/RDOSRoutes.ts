@@ -39,6 +39,43 @@ router.get('/v1/associar/rdos/:rdosId/atividades/',rdoscontroller.getActivitiesB
 router.get('/v1/associar/rdos/atividades/',rdoscontroller.getAssociationsAtividade.bind(rdoscontroller))
 // Remover associação entre uma atividade e um RDOS
 router.delete('/v1/associar/rdos/:rdosId/atividades/:atividadeId/excluir',rdoscontroller.unassignAtividade.bind(rdoscontroller))
+// Editar data-hora dos equipamentos de um RDOS
+router.put('/v1/associar/rdos/:rdosId/atividades/:atividadeId/editar',rdoscontroller.updateAtividade.bind(rdoscontroller))
 
+// Rotas de RDOS_equipamentos
+// Associar equipamento a RDOS
+router.post('/v1/associar/rdos/:rdosId/equipamentos/:equipamentoId', rdoscontroller.assignEquipment.bind(rdoscontroller));
+// Buscar equipamentos de um RDOS
+router.get('/v1/associar/rdos/:rdosId/equipamentos/',rdoscontroller.getEquipmentsByRDOSId.bind(rdoscontroller))
+// Buscar associações equipamento x RDOS
+router.get('/v1/associar/rdos/equipamentos/',rdoscontroller.getAssociationsEquipment.bind(rdoscontroller))
+// Remover associação entre um equipamento e um RDOS
+router.delete('/v1/associar/rdos/:rdosId/equipamentos/:equipamentoId/excluir',rdoscontroller.unassignEquipment.bind(rdoscontroller))
+// Editar quantidades dos equipamentos de um RDOS
+router.put('/v1/associar/rdos/:rdosId/equipamentos/:equipamentoId/editar',rdoscontroller.updateEquipment.bind(rdoscontroller))
+
+// Rotas de RDOS_maodeobra
+// Associar mão de obra a RDOS
+router.post('/v1/associar/rdos/:rdosId/maos-de-obra/:maoDeObraId', rdoscontroller.assignWorkforce.bind(rdoscontroller));
+// Buscar mãos de obra de um RDOS
+router.get('/v1/associar/rdos/:rdosId/maos-de-obra/',rdoscontroller.getWorkforceByRDOSId.bind(rdoscontroller))
+// Buscar associações mãos de obra x RDOS
+router.get('/v1/associar/rdos/maos-de-obra/',rdoscontroller.getAssociationsWorkforce.bind(rdoscontroller))
+// Remover associação entre uma mão de obra e um RDOS
+router.delete('/v1/associar/rdos/:rdosId/maos-de-obra/:maoDeObraId/excluir',rdoscontroller.unassignWorkforce.bind(rdoscontroller))
+// Editar quantidades das mãos de obra de um RDOS
+router.put('/v1/associar/rdos/:rdosId/maos-de-obra/:maoDeObraId/editar',rdoscontroller.updateWorforce.bind(rdoscontroller))
+
+// Rotas de RDOS_motivosdePausa
+// Associar pausa a RDOS
+router.post('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId', rdoscontroller.assignBreak.bind(rdoscontroller));
+// Buscar pausas de um RDOS
+router.get('/v1/associar/rdos/:rdosId/motivos-de-pausa/',rdoscontroller.getBreaksByRDOSId.bind(rdoscontroller))
+// Buscar associações pausa x RDOS
+router.get('/v1/associar/rdos/motivos-de-pausa/',rdoscontroller.getAssociationsBreak.bind(rdoscontroller))
+// Remover associação entre uma pausa e um RDOS
+router.delete('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId/excluir',rdoscontroller.unassignBreak.bind(rdoscontroller))
+// Editar datas de início e fim das pausas de um RDOS
+router.put('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId/editar',rdoscontroller.updateBreaks.bind(rdoscontroller))
 
 export default router;

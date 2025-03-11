@@ -6,9 +6,9 @@ export class RDOSRepository extends BaseRepository<typeof prisma.rDOS> {  // Usa
     super(prisma.rDOS);  // Passando o modelo correto para o BaseRepository
   }
 
-  // RDOS_Servico --------------------------------------------
+// RDOS_Servico --------------------------------------------
 
-  async criarAssociacao(rdosId: string, servicoId: string) {
+async criarAssociacao(rdosId: string, servicoId: string) {
     return await prisma.rDOS_Servico.create({
         data: { rdosId, servicoId }
     });
@@ -20,7 +20,6 @@ async excluirAssociacao(rdosId: string, servicoId: string) {
   });
 }
 
-
 async findByRDOSAndServico(rdosId: string, servicoId: string) {
   return prisma.rDOS_Servico.findUnique({
     where: {
@@ -30,35 +29,27 @@ async findByRDOSAndServico(rdosId: string, servicoId: string) {
       }
     }
   });
-  }
+}
 
-  // Potencial para implementar: busca por serviço. Está sem rota 
-  async findByServico(servicoId: string) {
+// Potencial para implementar: busca por serviço. Está sem rota 
+async findByServico(servicoId: string) {
     return prisma.rDOS_Servico.findMany({
       where: {
           servicoId      }
     });
-  }
-  async findByRDOS(rdosId: string) {
+}
+
+async findByRDOS(rdosId: string) {
     return prisma.rDOS_Servico.findMany({
       where: {
           rdosId      }
     });
-  }
+}
   
 async findAssociations() {
   return prisma.rDOS_Servico.findMany();
-  }
-      
-async inserirAtividadesNaRdo(rdosId: string, servicoId: string, atividades: { atividadeId: string }[]) {
-    const data = atividades.map(({ atividadeId }) => ({
-        rdosId,
-        servicoId,
-        atividadeId
-    }));
-
-    return await prisma.rDOS_Atividade.createMany({ data });
 }
+      
 
 // RDOS_Atividade --------------------------------------------
 async criarAssociacaoAtividade(rdosId: string, atividadeId: string) {
@@ -72,7 +63,6 @@ return await prisma.rDOS_Atividade.delete({
     where: {rdosId_atividadeId: { rdosId, atividadeId }}
 });
 }
-
 
 async findByRDOSAndAtividade(rdosId: string, atividadeId: string) {
 return prisma.rDOS_Atividade.findUnique({
@@ -102,6 +92,16 @@ async findAtividadeByRDOS(rdosId: string) {
 
 async findAssociationsAtividades() {
 return prisma.rDOS_Atividade.findMany();
+}
+
+async updateAtividade(rdosId: string, atividadeId: string, data: any) {
+  return prisma.rDOS_Atividade.update({ where: { rdosId_atividadeId :
+    {
+    rdosId,
+    atividadeId},
+  },
+    data 
+  });
 }
 
 
@@ -156,6 +156,180 @@ async associarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
     jaExistiam: atividadesExistentesIds.length > 0 ? atividadesExistentesIds.map(id => `${id} ...já existe...`) : 'Nenhuma atividade já existente.'
   };
 }
+
+async desassociarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
+  // 1. Buscar todas as atividades ativas associadas ao serviço
+  const atividadesAssociadas = await prisma.servico_Atividade.findMany({
+    where: {
+      servicoId: servicoId,
+      ativo: true
+    },
+    select: {
+      atividadeId: true
+    }
+  });
+
+  const atividadeIds = atividadesAssociadas.map(a => a.atividadeId);
+
+  if (atividadeIds.length === 0) {
+    return { message: 'Nenhuma atividade ativa associada ao serviço.' };
+  }
+
+  // 2. Remover as atividades da tabela rdos_atividade para este RDOS
+  const resultado = await prisma.rDOS_Atividade.deleteMany({
+    where: {
+      rdosId: rdosId,
+      atividadeId: { in: atividadeIds }
+    }
+  });
+
+  return {
+    message: resultado.count > 0
+      ? `Foram removidas ${resultado.count} atividades associadas ao serviço.`
+      : 'Nenhuma atividade foi removida.'
+  }
+
+}
+
+// RDOS_Equipamentos --------------------------------------------
+
+async criarAssociacaoEquipamento(rdosId: string, equipamentoId: string) {
+  return await prisma.rDOS_Equipamento.create({
+      data: { rdosId, equipamentoId }
+  });
+}
+
+async excluirAssociacaoEquipamento(rdosId: string, equipamentoId: string) {
+  return await prisma.rDOS_Equipamento.delete({
+      where: {rdosId_equipamentoId: { rdosId, equipamentoId }}
+  });
+}
+
+async findByRDOSAndEquipamento(rdosId: string, equipamentoId: string) {
+  return prisma.rDOS_Equipamento.findUnique({
+    where: {
+      rdosId_equipamentoId: {
+        rdosId,
+        equipamentoId
+      }
+    }
+  });
+}
+
+async findEquipamentoByRDOS(rdosId: string) {
+    return prisma.rDOS_Equipamento.findMany({
+      where: {
+          rdosId      }
+    });
+}
+  
+async findAssociationsEquipamento() {
+  return prisma.rDOS_Equipamento.findMany();
+}
+      
+async updateEquipment(rdosId: string, equipamentoId: string, data: any) {
+    return prisma.rDOS_Equipamento.update({ where: { rdosId_equipamentoId :
+      {
+      rdosId,
+      equipamentoId},
+    },
+      data 
+    });
+}
+
+// RDOS_MaodeObra --------------------------------------------
+
+async criarAssociacaoMaodeObra(rdosId: string, maoDeObraId: string) {
+  return await prisma.rDOS_MaoDeObra.create({
+      data: { rdosId, maoDeObraId }
+  });
+}
+  
+async excluirAssociacaoMaodeObra(rdosId: string, maoDeObraId: string) {
+  return await prisma.rDOS_MaoDeObra.delete({
+      where: {rdosId_maoDeObraId: { rdosId, maoDeObraId }}
+  });
+}
+  
+async findByRDOSAndMaodeObra(rdosId: string, maoDeObraId: string) {
+  return prisma.rDOS_MaoDeObra.findUnique({
+    where: {
+      rdosId_maoDeObraId: {
+        rdosId,
+        maoDeObraId
+      }
+    }
+  });
+}
+  
+async findMaodeObraByRDOS(rdosId: string) {
+  return prisma.rDOS_MaoDeObra.findMany({
+    where: {
+        rdosId      }
+  });
+}
+    
+async findAssociationsMaodeObra() {
+  return prisma.rDOS_MaoDeObra.findMany();
+}
+        
+async updateMaodeObra(rdosId: string, maoDeObraId: string, data: any) {
+  return prisma.rDOS_MaoDeObra.update({ where: { rdosId_maoDeObraId :
+    {
+      rdosId,
+      maoDeObraId},
+    },
+      data 
+    });
+}
+
+// RDOS_Motivos --------------------------------------------
+
+async criarAssociacaoMotivo(rdosId: string, motivoPausaId: string) {
+  return await prisma.rDOS_MotivoDePausa.create({
+      data: { rdosId, motivoPausaId }
+  });
+}
+
+async excluirAssociacaoMotivo(rdosId: string, motivoPausaId: string) {
+  return await prisma.rDOS_MotivoDePausa.delete({
+      where: {rdosId_motivoPausaId: { rdosId, motivoPausaId }}
+  });
+}
+
+
+async findByRDOSAndMotivo(rdosId: string, motivoPausaId: string) {
+  return prisma.rDOS_MotivoDePausa.findUnique({
+    where: {
+      rdosId_motivoPausaId: {
+        rdosId,
+        motivoPausaId
+      }
+    }
+  });
+}
+
+async findMotivoByRDOS(rdosId: string) {
+  return prisma.rDOS_MotivoDePausa.findMany({
+    where: {
+      rdosId      }
+    });
+}
+  
+async findAssociationsMotivo() {
+  return prisma.rDOS_MotivoDePausa.findMany();
+}
+      
+async updateMotivo(rdosId: string, motivoPausaId: string, data: any) {
+    return prisma.rDOS_MotivoDePausa.update({ where: { rdosId_motivoPausaId :
+      {
+      rdosId,
+      motivoPausaId},
+    },
+      data 
+    });
+}
+
 
 }
 
