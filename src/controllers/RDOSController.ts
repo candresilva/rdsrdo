@@ -193,8 +193,9 @@ async assignEquipment(req: Request, res: Response) {
   try {
     console.log("params",req.params);
       const { rdosId, equipamentoId } = req.params;
+      const { quantidade = 1 } = req.body || {};
 
-      const resultado = await this.rdosService.associarEquipamento(rdosId, equipamentoId);
+      const resultado = await this.rdosService.associarEquipamento(rdosId, equipamentoId, quantidade);
 
       res.status(200).json({ message: resultado });
   } catch (error: any) {
@@ -249,8 +250,9 @@ async assignWorkforce(req: Request, res: Response) {
   try {
     console.log("params",req.params);
       const { rdosId, maoDeObraId } = req.params;
+      const { quantidade = 1 } = req.body || {};
 
-      const resultado = await this.rdosService.associarMaodeObra(rdosId, maoDeObraId);
+      const resultado = await this.rdosService.associarMaodeObra(rdosId, maoDeObraId, quantidade);
 
       res.status(200).json({ message: resultado });
   } catch (error: any) {
@@ -304,9 +306,13 @@ async updateWorforce(req: Request, res: Response) {
 async assignBreak(req: Request, res: Response) {
   try {
     console.log("params",req.params);
+    console.log("body",req.body);
       const { rdosId, motivoPausaId } = req.params;
-
-      const pausa = await this.rdosService.associarMotivos(rdosId, motivoPausaId);
+      const { dataHoraInicio = "00:00", dataHoraFim = "00:00" } = 
+      Array.isArray(req.body) ? req.body[0] : req.body || {};
+    
+      const pausa = await this.rdosService.associarMotivos(
+        rdosId, motivoPausaId, dataHoraInicio, dataHoraFim);
 
       res.status(200).json({ message: pausa });
   } catch (error: any) {
@@ -348,7 +354,12 @@ async getAssociationsBreak(req: Request, res: Response) {
 
 async updateBreaks(req: Request, res: Response) {
   const { rdosId, motivoPausaId } = req.params;
-  const rdos = await this.rdosService.atualizarMotivo(rdosId, motivoPausaId, req.body);
+  const { dataHoraInicio = "00:00", dataHoraFim = "00:00" } = 
+  Array.isArray(req.body) ? req.body[0] : req.body || {};
+  console.log("data",dataHoraInicio)
+  console.log("data2",dataHoraFim)
+      
+  const rdos = await this.rdosService.atualizarMotivo(rdosId, motivoPausaId, dataHoraInicio,dataHoraFim);
   if (!rdos) {
     res.status(404).json({ message: 'RDOS não encontrada' });
   }

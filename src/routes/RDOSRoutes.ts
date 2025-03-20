@@ -68,14 +68,14 @@ router.put('/v1/associar/rdos/:rdosId/maos-de-obra/:maoDeObraId/editar',rdoscont
 
 // Rotas de RDOS_motivosdePausa
 // Associar pausa a RDOS
-router.post('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId', rdoscontroller.assignBreak.bind(rdoscontroller));
+router.post('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoPausaId', rdoscontroller.assignBreak.bind(rdoscontroller));
 // Buscar pausas de um RDOS
 router.get('/v1/associar/rdos/:rdosId/motivos-de-pausa/',rdoscontroller.getBreaksByRDOSId.bind(rdoscontroller))
 // Buscar associações pausa x RDOS
 router.get('/v1/associar/rdos/motivos-de-pausa/',rdoscontroller.getAssociationsBreak.bind(rdoscontroller))
 // Remover associação entre uma pausa e um RDOS
-router.delete('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId/excluir',rdoscontroller.unassignBreak.bind(rdoscontroller))
+router.delete('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoPausaId/excluir',rdoscontroller.unassignBreak.bind(rdoscontroller))
 // Editar datas de início e fim das pausas de um RDOS
-router.put('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoDePausaId/editar',rdoscontroller.updateBreaks.bind(rdoscontroller))
+router.put('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoPausaId/editar',rdoscontroller.updateBreaks.bind(rdoscontroller))
 
 export default router;

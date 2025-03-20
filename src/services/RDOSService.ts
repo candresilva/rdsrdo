@@ -1,3 +1,4 @@
+import prisma from '../database/prismaClient';
 import { RDOSRepository } from '../repositories/RDOSRepository';
 import { RDOS } from '@prisma/client';
 
@@ -6,6 +7,29 @@ export class RDOSService {
 
   constructor() {
     this.rdosRepository = new RDOSRepository();
+  }
+
+  private async gerarNumeroSequencial(ano: number, tipo: string): Promise<string> {
+    // Tenta encontrar o registro de sequencial para o ano e tipo
+    let sequencial = await prisma.sequencial.findUnique({
+      where: { ano_tipo: { ano, tipo } },
+    });
+
+    if (!sequencial) {
+      // Se não existe, cria um novo registro com ultimoNumero = 1
+      sequencial = await prisma.sequencial.create({
+        data: { ano, tipo, ultimoNumero: 1 },
+      });
+      return `1/${ano}`;
+    } else {
+      // Se já existe, incrementa o ultimoNumero
+      const novoSequencial = sequencial.ultimoNumero + 1;
+      await prisma.sequencial.update({
+        where: { ano_tipo: { ano, tipo } },
+        data: { ultimoNumero: novoSequencial },
+      });
+      return `${novoSequencial}/${ano}`;
+    }
   }
 
   async listar() {
@@ -40,12 +64,23 @@ export class RDOSService {
           // Criando múltiplas RDOS uma por uma
           const rdossCriadas = [];
           for (const rdos of dados) {
+            const ano = new Date().getFullYear();
+            const tipoSemDados = rdos.tipo || "";
+//            const { tipo, ...demaisDados } = dados;
+            // Gera o número sequencial para esse ano e tipo
+            const numeroSequencial = await this.gerarNumeroSequencial(ano, tipoSemDados);
+            rdos.numero = numeroSequencial;
             rdossCriadas.push(await this.rdosRepository.create(rdos));
           }
           return rdossCriadas; // Retorna um array de RDOS criadas
         }
     
         // Criando uma única rdos
+        const ano = new Date().getFullYear();
+        const tipoSemDados = dados.tipo || "";
+        const numeroSequencial = await this.gerarNumeroSequencial(ano, tipoSemDados);
+        dados.numero = numeroSequencial;
+
         return await this.rdosRepository.create(dados);
       } catch (error: any) {
         throw new Error('Erro ao criar RDOS: ' + error.message);
@@ -133,7 +168,7 @@ async atualizarAtividades(rdosId: string, atividadeId: string, data:any) {
 
 // RDOS_Equipamento --------------------------------------------
 
-async associarEquipamento(rdosId:string, equipamentoId: string) {
+async associarEquipamento(rdosId:string, equipamentoId: string, quantidade:number) {
   // Verifica se o equipamento já está associado à RDOS
   const existente = await this.rdosRepository.findByRDOSAndEquipamento(rdosId,equipamentoId);
 
@@ -142,7 +177,7 @@ async associarEquipamento(rdosId:string, equipamentoId: string) {
   }
 
   // Associa o equipamento à RDOS
-  await this.rdosRepository.criarAssociacaoEquipamento(rdosId, equipamentoId);
+  await this.rdosRepository.criarAssociacaoEquipamento(rdosId, equipamentoId, quantidade);
   
   return 'Equipamento associado com sucesso!';
 }
@@ -167,7 +202,7 @@ async atualizarEquipamentos(rdosId: string, equipamentoId: string, data:any) {
 
 // RDOS_MãodeObra --------------------------------------------
 
-async associarMaodeObra(rdosId:string, maoDeObraId: string) {
+async associarMaodeObra(rdosId:string, maoDeObraId: string, quantidade:number) {
   // Verifica se mão de obra já está associada à RDOS
   const existente = await this.rdosRepository.findByRDOSAndMaodeObra(rdosId,maoDeObraId);
 
@@ -176,7 +211,7 @@ async associarMaodeObra(rdosId:string, maoDeObraId: string) {
   }
 
   // Associa mão de obra à RDOS
-  await this.rdosRepository.criarAssociacaoMaodeObra(rdosId, maoDeObraId);
+  await this.rdosRepository.criarAssociacaoMaodeObra(rdosId, maoDeObraId, quantidade);
   
   return 'Mão de obra associada com sucesso!';
 }
@@ -200,16 +235,32 @@ async atualizarMaodeObra(rdosId: string, maoDeObraId: string, data:any) {
 
 // RDOS_Motivos --------------------------------------------
 
-async associarMotivos(rdosId:string, motivoPausaId: string) {
+async associarMotivos(rdosId:string, motivoPausaId: string,
+  dataHoraInicio: string, dataHoraFim: string) {
   // Verifica se pausa já está associada à RDOS
   const existente = await this.rdosRepository.findByRDOSAndMotivo(rdosId,motivoPausaId);
-
   if (existente) {
       throw new Error('Pausa já está associada a este RDOS.');
   }
 
+  //Tratamento de datas
+  const registro = await this.rdosRepository.findById(rdosId);
+  const somenteDia = registro.data
+  const ajustarData = (dataBase: Date, horaMinuto: string) => {
+    const dataFormatada = dataBase.toISOString().split("T")[0]; // Garante "YYYY-MM-DD"
+    return new Date(`${dataFormatada}T${horaMinuto}:00.000Z`);
+  };
+  const dataInicioAjustada = ajustarData(somenteDia, dataHoraInicio);
+  const dataFimAjustada = ajustarData(somenteDia, dataHoraFim);
+  console.log("data",registro.data)
+  console.log("data2",dataHoraInicio)
+  console.log("data3",dataHoraFim)
+  console.log("data4",dataInicioAjustada)
+  console.log("data5",dataFimAjustada)
+
+
   // Associa pausa à RDOS
-  await this.rdosRepository.criarAssociacaoMotivo(rdosId, motivoPausaId);
+  await this.rdosRepository.criarAssociacaoMotivo(rdosId, motivoPausaId, dataInicioAjustada, dataFimAjustada);
   
   return 'Pausa associada com sucesso!';
 }
@@ -227,10 +278,21 @@ async buscarAssociacoesMotivo() {
   return this.rdosRepository.findAssociationsMotivo();
 }
 
-async atualizarMotivo(rdosId: string, motivoPausaId: string, data:any) {
-  return this.rdosRepository.updateMotivo(rdosId, motivoPausaId, data);
-} 
+async atualizarMotivo(rdosId: string, motivoPausaId: string,
+  dataHoraInicio:string, dataHoraFim: string) {
 
+  //Tratamento de datas
+  const registro = await this.rdosRepository.findById(rdosId);
+  const somenteDia = registro.data
+  const ajustarData = (dataBase: Date, horaMinuto: string) => {
+  const dataFormatada = dataBase.toISOString().split("T")[0]; // Garante "YYYY-MM-DD"
+    return new Date(`${dataFormatada}T${horaMinuto}:00.000Z`);
+  };
+  const dataInicioAjustada = ajustarData(somenteDia, dataHoraInicio);
+  const dataFimAjustada = ajustarData(somenteDia, dataHoraFim);
+
+  return this.rdosRepository.updateMotivo(rdosId, motivoPausaId, dataInicioAjustada, dataFimAjustada);
+} 
 
 }
 

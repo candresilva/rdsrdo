@@ -1,12 +1,14 @@
 import prisma from '../database/prismaClient';  // Certifique-se de importar o prisma corretamente
 import { BaseRepository } from '../database/BaseRepository';
 
+
 export class RDOSRepository extends BaseRepository<typeof prisma.rDOS> {  // Usando o tipo correto aqui
   constructor() {
     super(prisma.rDOS);  // Passando o modelo correto para o BaseRepository
   }
 
 // RDOS_Servico --------------------------------------------
+
 
 async criarAssociacao(rdosId: string, servicoId: string) {
     return await prisma.rDOS_Servico.create({
@@ -75,7 +77,7 @@ return prisma.rDOS_Atividade.findUnique({
 });
 }
 
-// Potencial para implementar: busca por serviço. Está sem rota 
+// Potencial para implementar: busca por atividade. Está sem rota 
 async findByAtividade(atividadeId: string) {
   return prisma.rDOS_Atividade.findMany({
     where: {
@@ -125,7 +127,7 @@ async associarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
   }
 
   // 2. Buscar atividades já associadas ao RDO
-  const atividadesExistentes = await prisma.rDOS_Atividade.findMany({
+  const atividadesExistentes = await prisma.rDOS_ServicoAtividade.findMany({
     where: {
       rdosId: rdosId,
       atividadeId: { in: atividadeIds }
@@ -142,9 +144,10 @@ async associarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
 
   // 4. Inserir apenas as novas atividades na tabela `rdos_atividade`
   if (novasAtividades.length > 0) {
-    await prisma.rDOS_Atividade.createMany({
+    await prisma.rDOS_ServicoAtividade.createMany({
       data: novasAtividades.map(atividadeId => ({
         rdosId,
+        servicoId,
         atividadeId
       }))
     });
@@ -158,28 +161,10 @@ async associarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
 }
 
 async desassociarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
-  // 1. Buscar todas as atividades ativas associadas ao serviço
-  const atividadesAssociadas = await prisma.servico_Atividade.findMany({
-    where: {
-      servicoId: servicoId,
-      ativo: true
-    },
-    select: {
-      atividadeId: true
-    }
-  });
-
-  const atividadeIds = atividadesAssociadas.map(a => a.atividadeId);
-
-  if (atividadeIds.length === 0) {
-    return { message: 'Nenhuma atividade ativa associada ao serviço.' };
-  }
-
-  // 2. Remover as atividades da tabela rdos_atividade para este RDOS
-  const resultado = await prisma.rDOS_Atividade.deleteMany({
+  const resultado = await prisma.rDOS_ServicoAtividade.deleteMany({
     where: {
       rdosId: rdosId,
-      atividadeId: { in: atividadeIds }
+      servicoId: servicoId
     }
   });
 
@@ -193,9 +178,9 @@ async desassociarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
 
 // RDOS_Equipamentos --------------------------------------------
 
-async criarAssociacaoEquipamento(rdosId: string, equipamentoId: string) {
+async criarAssociacaoEquipamento(rdosId: string, equipamentoId: string, quantidade: number) {
   return await prisma.rDOS_Equipamento.create({
-      data: { rdosId, equipamentoId }
+      data: { rdosId, equipamentoId , quantidade}
   });
 }
 
@@ -239,9 +224,9 @@ async updateEquipment(rdosId: string, equipamentoId: string, data: any) {
 
 // RDOS_MaodeObra --------------------------------------------
 
-async criarAssociacaoMaodeObra(rdosId: string, maoDeObraId: string) {
+async criarAssociacaoMaodeObra(rdosId: string, maoDeObraId: string, quantidade: number) {
   return await prisma.rDOS_MaoDeObra.create({
-      data: { rdosId, maoDeObraId }
+      data: { rdosId, maoDeObraId, quantidade }
   });
 }
   
@@ -285,9 +270,11 @@ async updateMaodeObra(rdosId: string, maoDeObraId: string, data: any) {
 
 // RDOS_Motivos --------------------------------------------
 
-async criarAssociacaoMotivo(rdosId: string, motivoPausaId: string) {
+async criarAssociacaoMotivo(rdosId: string, motivoPausaId: string,
+  dataHoraInicio:Date, dataHoraFim:Date
+) {
   return await prisma.rDOS_MotivoDePausa.create({
-      data: { rdosId, motivoPausaId }
+      data: { rdosId, motivoPausaId, dataHoraInicio, dataHoraFim }
   });
 }
 
@@ -296,7 +283,6 @@ async excluirAssociacaoMotivo(rdosId: string, motivoPausaId: string) {
       where: {rdosId_motivoPausaId: { rdosId, motivoPausaId }}
   });
 }
-
 
 async findByRDOSAndMotivo(rdosId: string, motivoPausaId: string) {
   return prisma.rDOS_MotivoDePausa.findUnique({
@@ -320,16 +306,17 @@ async findAssociationsMotivo() {
   return prisma.rDOS_MotivoDePausa.findMany();
 }
       
-async updateMotivo(rdosId: string, motivoPausaId: string, data: any) {
+async updateMotivo(rdosId: string, motivoPausaId: string, dataHoraInicio:Date, dataHoraFim:Date) {
     return prisma.rDOS_MotivoDePausa.update({ where: { rdosId_motivoPausaId :
       {
       rdosId,
       motivoPausaId},
     },
-      data 
+      data: {
+        dataHoraInicio: dataHoraInicio,
+      dataHoraFim: dataHoraFim} 
     });
 }
-
 
 }
 
