@@ -12,6 +12,10 @@ router.get('/v1/listar/rdos/:id', rdoscontroller.getById.bind(rdoscontroller)); 
 router.post('/v1/criar/rdos', rdoscontroller.create.bind(rdoscontroller));  // Rota para criar uma nova RDOS
 router.put('/v1/editar/rdos/:id', rdoscontroller.update.bind(rdoscontroller));  // Rota para atualizar uma RDOS
 router.delete('/v1/excluir/rdos/:id', rdoscontroller.delete.bind(rdoscontroller));  // Rota para excluir uma RDOS
+router.get('/v1/listar/rdos/:id/resumo', rdoscontroller.getSummaryById.bind(rdoscontroller));  // Rota para buscar resumo de uma RDOS por ID
+router.get('/v1/listar/resumo-rdos', rdoscontroller.getSummary.bind(rdoscontroller));  // Rota para buscar listagem de resumos de RDOS
+router.get('/v1/listar/geral-rdos/:id', rdoscontroller.getCompleteById.bind(rdoscontroller));  // Rota para buscar dados completos de RDOS por ID
+
 
 // Rotas de RDOS_serviços
 // Associar serviço a RDOS

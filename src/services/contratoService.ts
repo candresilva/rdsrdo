@@ -64,6 +64,32 @@ export class ContratoService {
     return this.contratoRepository.findByEmpresa(empresaId);
   }
 
+  async obterResumoPorId(id: string) {
+    try {
+      const contratos = await this.contratoRepository.findListagem(id);
+      if (!contratos) {
+        throw new Error('Contratos não encontrados');
+      }
+      return contratos;
+    } catch (error:any) {
+      throw new Error('Erro ao obter Contratos por ID: ' + error.message);
+    }
+  }
+  
+  async obterResumo() {
+    try {
+      const contratos = await this.contratoRepository.findListagemGeral();
+      if (!contratos) {
+        throw new Error('Contratos não encontrados');
+      }
+      return contratos;
+    } catch (error:any) {
+      // Lançando erro caso a RDOS não seja encontrada ou outro erro ocorra
+      throw new Error('Erro ao obter Contratos: ' + error.message);
+    }
+  }
+  
+
 }
 
 export default new ContratoService();

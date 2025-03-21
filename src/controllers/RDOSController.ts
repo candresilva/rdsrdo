@@ -57,7 +57,6 @@ export class RDOSController {
   }
 }
 
-
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       console.log('Corpo da requisição recebido:', req.body);
@@ -365,6 +364,62 @@ async updateBreaks(req: Request, res: Response) {
   }
   res.json(rdos);
 }
+
+async getSummaryById(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+  const rdos = await this.rdosService.obterResumoPorId(id);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+} catch (err:any) {
+  console.error('Erro ao buscar RDOS por ID:', err);
+  if (err instanceof Error) {
+    res.status(500).json({ message: 'Erro ao buscar RDOS por ID', error: err.message });
+  } else {
+    res.status(500).json({ message: 'Erro desconhecido ao buscar RDOS por ID' });
+  }
+}
+}
+
+async getSummary(req: Request, res: Response) {
+//  const { id } = req.params;
+  try {
+  const rdos = await this.rdosService.obterResumo();
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+} catch (err:any) {
+  console.error('Erro ao buscar RDOS por ID:', err);
+  if (err instanceof Error) {
+    res.status(500).json({ message: 'Erro ao buscar RDOS por ID', error: err.message });
+  } else {
+    res.status(500).json({ message: 'Erro desconhecido ao buscar RDOS por ID' });
+  }
+}
+}
+
+async getCompleteById(req: Request, res: Response) {
+  const { id } = req.params;
+  console.log("cont")
+  try {
+  const rdos = await this.rdosService.obterCompletoPorId(id);
+  if (!rdos) {
+    res.status(404).json({ message: 'RDOS não encontrada' });
+  }
+  res.json(rdos);
+} catch (err:any) {
+  console.error('Erro ao buscar RDOS por ID:', err);
+  if (err instanceof Error) {
+    res.status(500).json({ message: 'Erro ao buscar RDOS por ID', error: err.message });
+  } else {
+    res.status(500).json({ message: 'Erro desconhecido ao buscar RDOS por ID' });
+  }
+}
+}
+
 
 }
 

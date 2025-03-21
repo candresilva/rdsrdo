@@ -55,8 +55,7 @@ export class EncarregadoController {
       res.status(500).json({ message: 'Erro desconhecido ao buscar encarregado por ID' });
     }
   }
-}
-
+  }
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -67,7 +66,7 @@ export class EncarregadoController {
   } catch(err:any) {
     next(err);
   }
-}
+  }
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
@@ -82,6 +81,41 @@ export class EncarregadoController {
     const { id } = req.params;
     await this.encarregadoService.remover(id);
     res.status(204).send();
+  }
+
+  async getSummaryById(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+    const encarregados = await this.encarregadoService.obterResumoPorId(id);
+    if (!encarregados) {
+      res.status(404).json({ message: 'Contrato não encontrado' });
+    }
+    res.json(encarregados);
+  } catch (err:any) {
+    console.error('Erro ao buscar Encarregado por ID:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar Encarregado por ID', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar Encarregado por ID' });
+    }
+  }
+  }
+
+  async getSummary(req: Request, res: Response) {
+    try {
+    const encarregados = await this.encarregadoService.obterResumo();
+    if (!encarregados) {
+      res.status(404).json({ message: 'Encarregados não encontrados' });
+    }
+    res.json(encarregados);
+  } catch (err:any) {
+    console.error('Erro ao buscar Encarregados:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar Encarregados', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar Encarregados' });
+    }
+  }
   }
 }
 

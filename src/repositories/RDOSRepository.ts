@@ -318,6 +318,152 @@ async updateMotivo(rdosId: string, motivoPausaId: string, dataHoraInicio:Date, d
     });
 }
 
+// RDOS - Listagem --------------------------------------------
+
+async findRDOSListagem(rdosId: string) {
+  return prisma.rDOS.findUnique({
+      where: { id: rdosId },
+      select: {
+          id: true,
+          data: true,
+          numero: true,
+          status: true,
+          tipo: true,
+          encarregado: {
+              select: { nome: true }
+          },
+          empresaContrato: {
+              select: { numeroDoContrato: true }
+          },
+          servicos: {
+              select: {
+                  servico: {
+                      select: { nome: true }
+                  }
+              }
+          }
+      }
+  });
+}
+
+async findRDOSListagemGeral() {
+  return prisma.rDOS.findMany({
+      select: {
+          id: true,
+          data: true,
+          numero: true,
+          status: true,
+          tipo: true,
+          encarregado: {
+              select: { nome: true }
+          },
+          empresaContrato: {
+              select: { numeroDoContrato: true }
+          },
+          servicos: {
+              select: {
+                  servico: {
+                      select: { nome: true }
+                  }
+              }
+          }
+      }
+  });
+}
+
+async findRDOSCompleto(rdosId: string) {
+  const rdos = await prisma.rDOS.findUnique({
+    where: { id: rdosId },
+    select: {
+        id: true,
+        data: true,
+        numero: true,
+        status: true,
+        tipo: true,
+        encarregado: {
+            select: { nome: true }
+        },
+        empresaContrato: {
+            select: { numeroDoContrato: true }
+        },
+        servicos: {
+            select: {
+                servico: {
+                    select: { nome: true }
+                }
+            }
+        },
+      maoDeObra: {
+        select:  { 
+          maoDeObra: {
+            select: {nome:true                
+            }
+          }, quantidade: true }
+      },
+      motivosDePausa: {
+        select: {
+          motivoPausa: {
+            select: {nome:true                
+            }
+          },
+          dataHoraInicio: true,
+          dataHoraFim: true
+        }
+      },
+      equipamentos: {
+        select: { 
+          equipamento: {
+            select: {nome: true }
+      }, quantidade:true}
+    },
+        servicosAtividades: {
+        select: {
+          servico: {
+            select: {nome: true}
+          },
+          atividade: { 
+            select: { nome: true
+            }
+          },
+          dataHoraInicio: true,
+          dataHoraFim: true
+        }
+      }
+    }
+  });
+
+  // Agrupar as atividades por serviço
+  const servicosAtividades: { [key: string]: { nome: string, inicio: Date, fim: Date }[] } = (rdos?.servicosAtividades ?? []).reduce((acc, item) => {
+    const servicoNome = item.servico.nome.toString();  // Garantir que o ID é uma string
+    const atividade = {
+      nome: item.atividade.nome,
+      inicio: item.dataHoraInicio ?? new Date("00:00"),
+      fim: item.dataHoraFim ?? new Date("00:00")
+    };
+
+    if (!acc[servicoNome]) {
+      acc[servicoNome] = [];
+    }
+
+    acc[servicoNome].push(atividade);
+    return acc;
+  }, {} as { [key: string]: { nome: string, inicio: Date, fim: Date }[] });  // Definindo explicitamente o tipo de acc
+
+  // Agora montando o resultado final mantendo a estrutura original
+  const resultado = {
+    ...rdos,  // Mantém os outros atributos do rdos
+    servicosAtividades: Object.keys(servicosAtividades).map(servicoId => {
+      const servico = rdos?.servicos.find(s => s.servico.nome === servicoId); // Comparação corrigida para ID
+      return {
+        servico: servico ? servico.servico.nome : 'Desconhecido',
+        atividades: servicosAtividades[servicoId]
+      };
+    })
+  };
+
+  return resultado; 
+}
+  
 }
 
 

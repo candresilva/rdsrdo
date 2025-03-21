@@ -294,6 +294,47 @@ async atualizarMotivo(rdosId: string, motivoPausaId: string,
   return this.rdosRepository.updateMotivo(rdosId, motivoPausaId, dataInicioAjustada, dataFimAjustada);
 } 
 
+async obterResumoPorId(id: string) {
+  try {
+    const rdos = await this.rdosRepository.findRDOSListagem(id);
+    if (!rdos) {
+      throw new Error('RDOS não encontrada');
+    }
+    return rdos;
+  } catch (error:any) {
+    // Lançando erro caso a RDOS não seja encontrada ou outro erro ocorra
+    throw new Error('Erro ao obter RDOS por ID: ' + error.message);
+  }
+}
+
+async obterResumo() {
+  try {
+    const rdos = await this.rdosRepository.findRDOSListagemGeral();
+    if (!rdos) {
+      throw new Error('RDOS não encontradas');
+    }
+    return rdos;
+  } catch (error:any) {
+    // Lançando erro caso a RDOS não seja encontrada ou outro erro ocorra
+    throw new Error('Erro ao obter RDOS: ' + error.message);
+  }
+}
+
+async obterCompletoPorId(id: string) {
+  try {
+    console.log("cont")
+    const rdos = await this.rdosRepository.findRDOSCompleto(id);
+    if (!rdos) {
+      throw new Error('RDOS não encontrada');
+    }
+    return rdos;
+  } catch (error:any) {
+    // Lançando erro caso a RDOS não seja encontrada ou outro erro ocorra
+    throw new Error('Erro ao obter RDOS por ID: ' + error.message);
+  }
+}
+
+
 }
 
 export default new RDOSService();

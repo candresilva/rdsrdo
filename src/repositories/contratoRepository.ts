@@ -6,6 +6,8 @@ export class ContratoRepository extends BaseRepository<typeof prisma.contrato> {
     super(prisma.contrato);  // Passando o modelo correto para o BaseRepository
   }
 
+// Contratos - Listagem --------------------------------------------
+
   async findByEmpresa(empresaId: string) {
     console.log("Filtrando contratos por empresaId:", empresaId);
     return prisma.contrato.findMany({
@@ -13,5 +15,32 @@ export class ContratoRepository extends BaseRepository<typeof prisma.contrato> {
     });
   }
   
+  async findListagem(id: string) {
+    return prisma.contrato.findUnique({
+        where: { id: id },
+        select: {
+            id: true,
+            empresa: {
+              select: {nome:true}
+            },
+            descricao: true,
+            numeroDoContrato: true,
+        }
+    });
+  }
+
+  async findListagemGeral() {
+    return prisma.contrato.findMany({
+      select: {
+        id: true,
+        empresa: {
+          select: {nome:true}
+        },
+        descricao: true,
+        numeroDoContrato: true,
+    }
+    });
+  }
+
 }
 

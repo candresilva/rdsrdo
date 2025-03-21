@@ -101,6 +101,41 @@ export class ContratoController {
   }
   }
 
+  async getSummaryById(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+    const contratos = await this.contratoService.obterResumoPorId(id);
+    if (!contratos) {
+      res.status(404).json({ message: 'Contrato não encontrado' });
+    }
+    res.json(contratos);
+  } catch (err:any) {
+    console.error('Erro ao buscar Contrato por ID:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar Contrato por ID', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar Contrato por ID' });
+    }
+  }
+  }
+
+  async getSummary(req: Request, res: Response) {
+    try {
+    const contratos = await this.contratoService.obterResumo();
+    if (!contratos) {
+      res.status(404).json({ message: 'Contratos não encontrados' });
+    }
+    res.json(contratos);
+  } catch (err:any) {
+    console.error('Erro ao buscar Contratos:', err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Erro ao buscar Contratos', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Erro desconhecido ao buscar Contratos' });
+    }
+  }
+  }
+
 }
 
 //export default new ContratoController();

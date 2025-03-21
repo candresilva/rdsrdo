@@ -19,7 +19,6 @@ export class EncarregadoService {
         }
   }
 
-
   async obterPorId(id: string) {
     try {
       const encarregado = await this.encarregadoRepository.findById(id);
@@ -33,39 +32,26 @@ export class EncarregadoService {
     }
   }
 
-  /* async criar(dados: Partial<Encarregado>) {
-    try{
+  async criar(dados: Partial<Encarregado> | Partial<Encarregado>[]) {
+    try {
       console.log('Dados recebidos para criação:', dados);
-      const encarregado = await this.encarregadoRepository.create(dados);
-      return encarregado;
-  } catch(error:any) {
-    throw new Error('Erro ao criar encarregado: ' + error.message);
-
-  }
-    } */
-
-    async criar(dados: Partial<Encarregado> | Partial<Encarregado>[]) {
-      try {
-        console.log('Dados recebidos para criação:', dados);
-    
-        if (Array.isArray(dados)) {
-          // Criando múltiplos encarregados um por um
-          const encarregadosCriados = [];
-          for (const encarregado of dados) {
-            encarregadosCriados.push(await this.encarregadoRepository.create(encarregado));
-          }
-          return encarregadosCriados; // Retorna um array de encarregados criados
-        }
-    
-        // Criando um único encarregado
-        return await this.encarregadoRepository.create(dados);
-      } catch (error: any) {
-        throw new Error('Erro ao criar encarregado: ' + error.message);
-      }
-    }
-    
   
-
+      if (Array.isArray(dados)) {
+        // Criando múltiplos encarregados um por um
+        const encarregadosCriados = [];
+        for (const encarregado of dados) {
+          encarregadosCriados.push(await this.encarregadoRepository.create(encarregado));
+        }
+        return encarregadosCriados; // Retorna um array de encarregados criados
+      }
+  
+      // Criando um único encarregado
+      return await this.encarregadoRepository.create(dados);
+    } catch (error: any) {
+      throw new Error('Erro ao criar encarregado: ' + error.message);
+    }
+  }
+    
   async atualizar(id: string, dados: Partial<Encarregado>) {
     return await this.encarregadoRepository.update(id, dados);
   }
@@ -73,6 +59,32 @@ export class EncarregadoService {
   async remover(id: string) {
     await this.encarregadoRepository.delete(id);
   }
+
+  async obterResumoPorId(id: string) {
+    try {
+      const encarregados = await this.encarregadoRepository.findListagem(id);
+      if (!encarregados) {
+        throw new Error('Encarregado não encontrado');
+      }
+      return encarregados;
+    } catch (error:any) {
+      throw new Error('Erro ao obter Encarregado por ID: ' + error.message);
+    }
+  }
+  
+  async obterResumo() {
+    try {
+      const encarregados = await this.encarregadoRepository.findListagemGeral();
+      if (!encarregados) {
+        throw new Error('Encarregados não encontrados');
+      }
+      return encarregados;
+    } catch (error:any) {
+      // Lançando erro caso a RDOS não seja encontrada ou outro erro ocorra
+      throw new Error('Erro ao obter Encarregados: ' + error.message);
+    }
+  }
+  
 }
 
 export default new EncarregadoService();
