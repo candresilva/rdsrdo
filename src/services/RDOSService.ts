@@ -66,8 +66,6 @@ export class RDOSService {
           for (const rdos of dados) {
             const ano = new Date().getFullYear();
             const tipoSemDados = rdos.tipo || "";
-//            const { tipo, ...demaisDados } = dados;
-            // Gera o número sequencial para esse ano e tipo
             const numeroSequencial = await this.gerarNumeroSequencial(ano, tipoSemDados);
             rdos.numero = numeroSequencial;
             rdossCriadas.push(await this.rdosRepository.create(rdos));
@@ -80,8 +78,10 @@ export class RDOSService {
         const tipoSemDados = dados.tipo || "";
         const numeroSequencial = await this.gerarNumeroSequencial(ano, tipoSemDados);
         dados.numero = numeroSequencial;
-
-        return await this.rdosRepository.create(dados);
+        const adjustedStatus = dados.status ==="Pendente"? "Aberto":dados.status
+        const adjustedDados = {...dados, status: adjustedStatus }
+        
+        return await this.rdosRepository.create(adjustedDados);
       } catch (error: any) {
         throw new Error('Erro ao criar RDOS: ' + error.message);
       }

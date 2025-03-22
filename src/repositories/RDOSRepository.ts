@@ -458,7 +458,7 @@ async findRDOSCompleto(rdosId: string) {
         servico: servico ? servico.servico.nome : 'Desconhecido',
         atividades: servicosAtividades[servicoId]
       };
-    })
+    }) 
   };
 
   return resultado; 
