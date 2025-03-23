@@ -4,10 +4,11 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
 // Configuração do banco de dados
+// Altere para "postgres" ou "sqlite" se necessário
+
 datasource db {
-  provider = "mysql" // Altere para "postgres" ou "sqlite" se necessário
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
