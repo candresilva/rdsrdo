@@ -9,6 +9,7 @@ import empresaRoutes from './routes/empresaRoutes.js';
 import RDOSRoutes from './routes/RDOSRoutes.js';
 import encarregadoRoutes from './routes/encarregadoRoutes.js';
 import equipamentoRoutes from './routes/equipamentoRoutes.js';
+import prisma from './database/prismaClient.js'
 dotenv.config();
 
 
@@ -40,4 +41,6 @@ app.use('/api', equipamentoRoutes);  // As rotas de equipamentos estarão dispon
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
 });
