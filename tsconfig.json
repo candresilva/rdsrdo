@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",  // Use ESNext para compatibilidade total com módulos ES
+    "module": "ESNext",  // Use ESNext para compatibilidade total com módulos ES
     "target": "ES6",     // Você pode manter ES6 ou até mesmo "ES2020"
     "outDir": "./dist",  // Diretório de saída para os arquivos compilados
     "rootDir": "./src",  // Diretório dos arquivos fonte
