@@ -5,6 +5,8 @@
     "outDir": "./dist",  // Diretório de saída para os arquivos compilados
     "rootDir": "./src",  // Diretório dos arquivos fonte
     "strict": true,
+    "moduleResolution": "node",
+
     "esModuleInterop": true,  // Habilitar interoperabilidade com CommonJS
     "resolveJsonModule": true,
   },
