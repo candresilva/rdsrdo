@@ -1,5 +1,5 @@
 import express from 'express';
-import {MotivoDePausaController} from '../controllers/motivodepausaController';  // Importando a instância do controlador
+import {MotivoDePausaController} from '../controllers/motivodepausaController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const motivodepausacontroller = MotivoDePausaController.getInstance();

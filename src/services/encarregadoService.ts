@@ -1,4 +1,4 @@
-import { EncarregadoRepository } from '../repositories/encarregadoRepository';
+import { EncarregadoRepository } from '../repositories/encarregadoRepository.js';
 import { Encarregado } from '@prisma/client';
 
 export class EncarregadoService {

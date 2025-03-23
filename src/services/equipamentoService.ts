@@ -1,4 +1,4 @@
-import { EquipamentoRepository } from '../repositories/equipamentoRepository';
+import { EquipamentoRepository } from '../repositories/equipamentoRepository.js';
 import { Equipamento } from '@prisma/client';
 
 export class EquipamentoService {

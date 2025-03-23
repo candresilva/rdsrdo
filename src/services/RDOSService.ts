@@ -1,5 +1,5 @@
-import prisma from '../database/prismaClient';
-import { RDOSRepository } from '../repositories/RDOSRepository';
+import prisma from '../database/prismaClient.js';
+import { RDOSRepository } from '../repositories/RDOSRepository.js';
 import { RDOS } from '@prisma/client';
 
 export class RDOSService {

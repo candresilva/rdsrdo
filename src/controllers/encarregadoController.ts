@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { EncarregadoService } from '../services/encarregadoService';
+import { EncarregadoService } from '../services/encarregadoService.js';
 
 export class EncarregadoController {
   private static instance: EncarregadoController;

@@ -1,5 +1,5 @@
 import express from 'express';
-import {MaoDeObraController} from '../controllers/maodeobraController';  // Importando a instância do controlador
+import {MaoDeObraController} from '../controllers/maodeobraController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const maodeobracontroller = MaoDeObraController.getInstance();

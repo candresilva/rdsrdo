@@ -1,4 +1,4 @@
-import { MaoDeObraRepository } from '../repositories/maodeobraRepository';
+import { MaoDeObraRepository } from '../repositories/maodeobraRepository.js';
 import { MaoDeObra } from '@prisma/client';
 
 export class MaoDeObraService {

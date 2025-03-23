@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { MotivoDePausaService } from '../services/motivodepausaService';
+import { MotivoDePausaService } from '../services/motivodepausaService.js';
 
 export class MotivoDePausaController {
   private static instance: MotivoDePausaController;

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ServicoService } from '../services/servicoService';
+import { ServicoService } from '../services/servicoService.js';
 
 export class ServicoController {
   private static instance: ServicoController;

@@ -1,5 +1,5 @@
 import express from 'express';
-import {ContratoController} from '../controllers/contratoController';  // Importando a instância do controlador
+import {ContratoController} from '../controllers/contratoController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const contratocontroller = ContratoController.getInstance();

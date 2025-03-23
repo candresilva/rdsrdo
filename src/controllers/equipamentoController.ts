@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { EquipamentoService } from '../services/equipamentoService';
+import { EquipamentoService } from '../services/equipamentoService.js';
 
 export class EquipamentoController {
   private static instance: EquipamentoController;

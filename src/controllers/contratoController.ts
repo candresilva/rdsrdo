@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ContratoService } from '../services/contratoService';
+import { ContratoService } from '../services/contratoService.js';
 
 export class ContratoController {
   private static instance: ContratoController;

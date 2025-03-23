@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RDOSService } from '../services/RDOSService';
+import { RDOSService } from '../services/RDOSService.js';
 
 export class RDOSController {
   private static instance: RDOSController;

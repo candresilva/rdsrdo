@@ -1,4 +1,4 @@
-import { AtividadeRepository } from '../repositories/atividadeRepository';
+import { AtividadeRepository } from '../repositories/atividadeRepository.js';
 import { Atividade } from '@prisma/client';
 
 export class AtividadeService {

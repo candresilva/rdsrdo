@@ -1,5 +1,5 @@
 import express from 'express';
-import {EmpresaController} from '../controllers/empresaController';  // Importando a instância do controlador
+import {EmpresaController} from '../controllers/empresaController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const empresacontroller = EmpresaController.getInstance();

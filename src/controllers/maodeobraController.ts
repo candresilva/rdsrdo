@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { MaoDeObraService } from '../services/maodeobraService';
+import { MaoDeObraService } from '../services/maodeobraService.js';
 
 export class MaoDeObraController {
   private static instance: MaoDeObraController;

@@ -1,14 +1,14 @@
 import express from 'express';
-import atividadeRoutes from './routes/atividadeRoutes';  // Importando as rotas de atividade
+import atividadeRoutes from './routes/atividadeRoutes.js';  // Importando as rotas de atividade
 import dotenv from 'dotenv';
-import servicoRoutes from './routes/servicoRoutes';
-import maodeobraRoutes from './routes/maodeobraRoutes';
-import motivodepausaRoutes from './routes/motivodepausaRoutes';
-import contratoRoutes from './routes/contratoRoutes';
-import empresaRoutes from './routes/empresaRoutes';
-import RDOSRoutes from './routes/RDOSRoutes';
-import encarregadoRoutes from './routes/encarregadoRoutes';
-import equipamentoRoutes from './routes/equipamentoRoutes';
+import servicoRoutes from './routes/servicoRoutes.js';
+import maodeobraRoutes from './routes/maodeobraRoutes.js';
+import motivodepausaRoutes from './routes/motivodepausaRoutes.js';
+import contratoRoutes from './routes/contratoRoutes.js';
+import empresaRoutes from './routes/empresaRoutes.js';
+import RDOSRoutes from './routes/RDOSRoutes.js';
+import encarregadoRoutes from './routes/encarregadoRoutes.js';
+import equipamentoRoutes from './routes/equipamentoRoutes.js';
 dotenv.config();
 
 

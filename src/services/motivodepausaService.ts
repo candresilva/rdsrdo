@@ -1,4 +1,4 @@
-import { MotivoDePausaRepository } from '../repositories/motivodepausaRepository';
+import { MotivoDePausaRepository } from '../repositories/motivodepausaRepository.js';
 import { MotivoDePausa } from '@prisma/client';
 
 export class MotivoDePausaService {

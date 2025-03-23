@@ -1,5 +1,5 @@
 import express from 'express';
-import {AtividadeController} from '../controllers/atividadeController';  // Importando a instância do controlador
+import {AtividadeController} from '../controllers/atividadeController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const atividadecontroller = AtividadeController.getInstance();

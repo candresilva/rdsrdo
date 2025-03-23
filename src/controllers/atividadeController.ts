@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AtividadeService } from '../services/atividadeService';
+import { AtividadeService } from '../services/atividadeService.js';
 
 export class AtividadeController {
   private static instance: AtividadeController;

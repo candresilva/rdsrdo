@@ -1,4 +1,4 @@
-import { EmpresaRepository } from '../repositories/empresaRepository';
+import { EmpresaRepository } from '../repositories/empresaRepository.js';
 import { Empresa} from '@prisma/client';
 
 

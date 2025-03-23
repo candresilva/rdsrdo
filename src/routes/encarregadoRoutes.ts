@@ -1,5 +1,5 @@
 import express from 'express';
-import {EncarregadoController} from '../controllers/encarregadoController';  // Importando a instância do controlador
+import {EncarregadoController} from '../controllers/encarregadoController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const encarregadocontroller = EncarregadoController.getInstance();

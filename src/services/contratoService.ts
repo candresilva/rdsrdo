@@ -1,4 +1,4 @@
-import { ContratoRepository } from '../repositories/contratoRepository';
+import { ContratoRepository } from '../repositories/contratoRepository.js';
 import { Contrato } from '@prisma/client';
 
 export class ContratoService {

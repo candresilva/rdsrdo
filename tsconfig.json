@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "module": "ESNext",  // Use ESNext para compatibilidade total com módulos ES
+    "module": "NodeNext",  // Use ESNext para compatibilidade total com módulos ES
     "target": "ES6",     // Você pode manter ES6 ou até mesmo "ES2020"
     "outDir": "./dist",  // Diretório de saída para os arquivos compilados
     "rootDir": "./src",  // Diretório dos arquivos fonte
     "strict": true,
     "esModuleInterop": true,  // Habilitar interoperabilidade com CommonJS
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node"
   },
   "include": [
     "src/**/*"  // Garantir que todos os arquivos dentro da pasta src sejam incluídos na compilação

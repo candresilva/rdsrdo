@@ -1,4 +1,4 @@
-import { ServicoRepository } from '../repositories/servicoRepository';
+import { ServicoRepository } from '../repositories/servicoRepository.js';
 import { Servico } from '@prisma/client';
 
 export class ServicoService {

@@ -1,5 +1,5 @@
 import express from 'express';
-import {RDOSController} from '../controllers/RDOSController';  // Importando a instância do controlador
+import {RDOSController} from '../controllers/RDOSController.js';  // Importando a instância do controlador
 
 const router = express.Router();
 const rdoscontroller = RDOSController.getInstance();

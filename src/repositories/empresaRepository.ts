@@ -1,5 +1,5 @@
-import prisma from '../database/prismaClient';  // Certifique-se de importar o prisma corretamente
-import { BaseRepository } from '../database/BaseRepository';
+import prisma from '../database/prismaClient.js';  // Certifique-se de importar o prisma corretamente
+import { BaseRepository } from '../database/BaseRepository.js';
 
 export class EmpresaRepository extends BaseRepository<typeof prisma.empresa> {  // Usando o tipo correto aqui
   constructor() {
