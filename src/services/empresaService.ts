@@ -1,5 +1,6 @@
 import { EmpresaRepository } from '../repositories/empresaRepository';
-import { Empresa } from '@prisma/client';
+import { Empresa} from '@prisma/client';
+
 
 export class EmpresaService {
   private empresaRepository: EmpresaRepository;

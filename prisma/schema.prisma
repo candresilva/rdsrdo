@@ -40,6 +40,8 @@ model RDOS {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("rdos")
 }
 
 model Contrato {
@@ -54,6 +56,8 @@ model Contrato {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+    @@map("contrato")
 }
 
 model Empresa {
@@ -63,6 +67,8 @@ model Empresa {
 
     createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+  @@map("empresa")
 }
 
 model Servico {
@@ -77,6 +83,8 @@ model Servico {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+    @@map("servico")
 }
 
 model Atividade {
@@ -91,6 +99,8 @@ model Atividade {
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+    @@map("atividade")
 }
 
 model MaoDeObra {
@@ -100,6 +110,8 @@ model MaoDeObra {
   rdos       RDOS_MaoDeObra[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+    @@map("maodeobra")
   }
 
 model Equipamento {
@@ -112,6 +124,8 @@ model Equipamento {
   rdos             RDOS_Equipamento[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("equipamento")
 }
 
 model MotivoDePausa {
@@ -122,6 +136,8 @@ model MotivoDePausa {
   rdos       RDOS_MotivoDePausa[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt @default(now())
+
+    @@map("motivodepausa")
 }
 
 
@@ -131,6 +147,8 @@ model Encarregado {
   rdos  RDOS[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("encarregado")
 }
 
 model Fiscal {
@@ -139,6 +157,8 @@ model Fiscal {
   rdos  RDOS_Fiscal[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("fiscal")
 }
 
 model Sequencial {
@@ -149,6 +169,8 @@ model Sequencial {
   updatedAt DateTime @updatedAt
 
     @@unique([ano, tipo], name: "ano_tipo")
+
+    @@map("sequencial")
 
 }
 
@@ -165,6 +187,8 @@ model RDOS_Servico {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("rdos_servico")
 }
 
 model RDOS_Atividade {
@@ -179,6 +203,8 @@ model RDOS_Atividade {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("rdos_atividade")
 }
 
 model RDOS_MaoDeObra {
@@ -192,6 +218,8 @@ model RDOS_MaoDeObra {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("rdos_maodeobra")
 }
 
 model RDOS_Equipamento {
@@ -205,6 +233,8 @@ model RDOS_Equipamento {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("rdos_equipamento")
 }
 
 model RDOS_MotivoDePausa {
@@ -220,6 +250,8 @@ model RDOS_MotivoDePausa {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+    @@map("rdos_motivodepausa")
 }
 
 model RDOS_Fiscal {
@@ -232,6 +264,8 @@ model RDOS_Fiscal {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("rdos_fiscal")
 }
 
 model RDOS_ServicoAtividade {
@@ -248,6 +282,8 @@ model RDOS_ServicoAtividade {
   @@id([rdosId, servicoId, atividadeId])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("rdos_servicoatividade")
   
 }
 
@@ -263,6 +299,8 @@ model Servico_Atividade {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+      @@map("servico_atividade")
 }
 
 
