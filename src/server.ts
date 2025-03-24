@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import atividadeRoutes from './routes/atividadeRoutes.js';  // Importando as rotas de atividade
-import dotenv from 'dotenv';
 import servicoRoutes from './routes/servicoRoutes.js';
 import maodeobraRoutes from './routes/maodeobraRoutes.js';
 import motivodepausaRoutes from './routes/motivodepausaRoutes.js';
@@ -10,7 +12,6 @@ import RDOSRoutes from './routes/RDOSRoutes.js';
 import encarregadoRoutes from './routes/encarregadoRoutes.js';
 import equipamentoRoutes from './routes/equipamentoRoutes.js';
 import prisma from './database/prismaClient.js'
-dotenv.config();
 
 
 const app = express();
