@@ -101,6 +101,9 @@ async getAssociationsComNome(id: string) {
 }
 
 async getAllAssociationsComNome() {
+  const allServices = await prisma.servico.findMany({
+    select: { id: true, nome: true }
+  });
   const data = await prisma.servico_Atividade.findMany({
     where: {
       ativo: true,  // Filtra apenas as associações onde ativo é true
@@ -131,8 +134,14 @@ async getAllAssociationsComNome() {
     return acc;
   }, {} as Record<string, { servicoId: string; nome: string; atividades: { atividadeId: string, nome: string, inicio?: string | null, fim?: string | null }[] }>);
 
-  // Converte o objeto de serviços para um array
-  return Object.values(result);
+  // Agora garantimos que todos os serviços sejam incluídos
+  const finalResult = allServices.map(service => ({
+    servicoId: service.id,
+    nome: service.nome,
+    atividades: result[service.id]?.atividades || []  // Se não houver atividades, retorna array vazio
+  }));
+
+  return finalResult;
 }
 
 
