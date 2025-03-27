@@ -99,6 +99,14 @@ export class ServicoService {
     return this.servicoRepository.findAssociations();
   }
 
+  async buscarAssociacoesComNome(id: string) {
+    return this.servicoRepository.getAssociationsComNome(id);
+  }
+  
+  async buscarAllAssociacoesComNome() {
+    return this.servicoRepository.getAllAssociationsComNome();
+  }
+  
 }
 
 export default new ServicoService();

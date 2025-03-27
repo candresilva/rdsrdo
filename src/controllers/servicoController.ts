@@ -140,6 +140,30 @@ export class ServicoController {
   }
   }
 
+  async getAssociationsWithName(req: Request, res: Response) {
+    const { id } = req.params;
+    try{
+    const servicos =  await this.servicoService.buscarAssociacoesComNome(id);
+    res.json(servicos);
+  } catch (err:any) {
+      console.error('Erro ao listar servicos:', err);
+      res.status(500).json({ message: err.message });
+  //    next(err);
+  }
+  }
+
+  async getAllAssociationsWithName(req: Request, res: Response) {
+    try{
+    const servicos =  await this.servicoService.buscarAllAssociacoesComNome();
+    res.json(servicos);
+  } catch (err:any) {
+      console.error('Erro ao listar servicos:', err);
+      res.status(500).json({ message: err.message });
+  //    next(err);
+  }
+  }
+
+
 }
 
 //export default new ServicoController();

@@ -97,7 +97,7 @@ export class RDOSService {
 
 // RDOS_Servico --------------------------------------------
 
-async associarServico(rdosId:string, servicoId: string) {
+async associarServico(rdosId:string, servicoId: string, atividades: any) {
   // Verifica se o serviço já está associado à RDOS
   const existente = await this.rdosRepository.findByRDOSAndServico(rdosId,servicoId);
 
@@ -108,7 +108,7 @@ async associarServico(rdosId:string, servicoId: string) {
   // Associa o serviço à RDOS
   await this.rdosRepository.criarAssociacao(rdosId,servicoId);
   // Chama a função que associa as atividades do serviço ao RDO
-  const resultadoAtividades = await this.rdosRepository.associarRDOSServicoComAtividades(rdosId, servicoId);
+  const resultadoAtividades = await this.rdosRepository.associarRDOSServicoComAtividades(rdosId, servicoId, atividades);
 
   return {      
     message: 'Serviço associado com sucesso!',
@@ -134,6 +134,7 @@ async buscarAssociacoes() {
   return this.rdosRepository.findAssociations();
 }
 
+
 // RDOS_Atividade --------------------------------------------
 
 async associarAtividade(rdosId:string, atividadeId: string) {
@@ -150,8 +151,8 @@ async associarAtividade(rdosId:string, atividadeId: string) {
   return 'Atividade associada com sucesso!';
 };
 
-async removerAtividade(rdosId: string, atividadeId: string) {
-await this.rdosRepository.excluirAssociacaoAtividade(rdosId, atividadeId);
+async removerAtividade(rdosId: string, atividadeId: string, servicoId: string) {
+await this.rdosRepository.excluirAssociacaoAtividade(rdosId, atividadeId, servicoId);
 }
 
 async buscarAtividades(rdosId: string) {
@@ -162,8 +163,35 @@ async buscarAssociacoesAtividades() {
 return this.rdosRepository.findAssociationsAtividades();
 }
 
-async atualizarAtividades(rdosId: string, atividadeId: string, data:any) {
-  return this.rdosRepository.updateAtividade(rdosId, atividadeId, data);
+async atualizarAtividades(rdosId:string, 
+  servicoId: string, atividadeId:string,
+  dataHoraInicio: string, dataHoraFim: string) {
+
+  //Tratamento de datas
+  const registro = await this.rdosRepository.findById(rdosId);
+  const somenteDia = registro.data
+  const ajustarData = (dataBase: Date, horaMinuto: string) => {
+    const [hora, minuto] = horaMinuto.split(":").map(Number);
+    const dataAjustada = new Date(dataBase);
+    dataAjustada.setUTCHours(hora, minuto, 0, 0); 
+    return dataAjustada;
+  };
+  
+  const dataInicioAjustada = ajustarData(somenteDia, dataHoraInicio);
+  const dataFimAjustada = ajustarData(somenteDia, dataHoraFim);
+  console.log("data",registro.data)
+  console.log("data2",dataHoraInicio)
+  console.log("data3",dataHoraFim)
+  console.log("data4",dataInicioAjustada)
+  console.log("data5",dataFimAjustada)
+
+
+  // Associa pausa à RDOS
+  await this.rdosRepository.updateAtividade(rdosId,
+    servicoId, atividadeId,
+    dataInicioAjustada, dataFimAjustada);
+  
+  return 'Atividade associada com sucesso!';
 }
 
 // RDOS_Equipamento --------------------------------------------
@@ -334,6 +362,9 @@ async obterCompletoPorId(id: string) {
   }
 }
 
+async buscarAssociacoesComNome(id: string) {
+  return this.rdosRepository.getAssociationsComNome(id);
+}
 
 }
 

@@ -60,9 +60,9 @@ async criarAssociacaoAtividade(rdosId: string, atividadeId: string) {
   });
 }
 
-async excluirAssociacaoAtividade(rdosId: string, atividadeId: string) {
-return await prisma.rDOS_Atividade.delete({
-    where: {rdosId_atividadeId: { rdosId, atividadeId }}
+async excluirAssociacaoAtividade(rdosId: string, atividadeId: string, servicoId:string) {
+return await prisma.rDOS_ServicoAtividade.delete({
+    where: {rdosId_servicoId_atividadeId: { rdosId,servicoId, atividadeId }}
 });
 }
 
@@ -96,68 +96,92 @@ async findAssociationsAtividades() {
 return prisma.rDOS_Atividade.findMany();
 }
 
-async updateAtividade(rdosId: string, atividadeId: string, data: any) {
-  return prisma.rDOS_Atividade.update({ where: { rdosId_atividadeId :
+async updateAtividade(rdosId: string,
+  servicoId:string, atividadeId: string,
+  dataHoraInicio: Date, dataHoraFim: Date) {
+  return prisma.rDOS_ServicoAtividade.update({ where: { rdosId_servicoId_atividadeId :
     {
     rdosId,
+    servicoId,
     atividadeId},
   },
-    data 
+  data:{
+    dataHoraInicio: dataHoraInicio,
+    dataHoraFim: dataHoraFim
+  } 
   });
 }
 
 
 // RDOS_Servico_Atividade --------------------------------------------
-async associarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
-  // 1. Buscar todas as atividades ativas associadas ao serviço
-  const atividadesAssociadas = await prisma.servico_Atividade.findMany({
-    where: {
-      servicoId: servicoId,
-      ativo: true
-    },
-    select: {
-      atividadeId: true
-    }
-  });
+async associarRDOSServicoComAtividades(rdosId: string, servicoId: string, atividades: any) {
+  const isDataValid = Array.isArray(atividades) && atividades.length > 0;
 
-  const atividadeIds = atividadesAssociadas.map(a => a.atividadeId);
-
-  if (atividadeIds.length === 0) {
-    return { message: 'Nenhuma atividade ativa associada ao serviço.' };
-  }
-
-  // 2. Buscar atividades já associadas ao RDO
-  const atividadesExistentes = await prisma.rDOS_ServicoAtividade.findMany({
-    where: {
-      rdosId: rdosId,
-      atividadeId: { in: atividadeIds }
-    },
-    select: {
-      atividadeId: true
-    }
-  });
-
-  const atividadesExistentesIds = atividadesExistentes.map(a => a.atividadeId);
-
-  // 3. Filtrar atividades que ainda não foram associadas ao RDO
-  const novasAtividades = atividadeIds.filter(id => !atividadesExistentesIds.includes(id));
-
-  // 4. Inserir apenas as novas atividades na tabela `rdos_atividade`
-  if (novasAtividades.length > 0) {
-    await prisma.rDOS_ServicoAtividade.createMany({
-      data: novasAtividades.map(atividadeId => ({
-        rdosId,
-        servicoId,
-        atividadeId
-      }))
+  if (!isDataValid) {
+    // 1. Buscar todas as atividades ativas associadas ao serviço
+    const atividadesAssociadas = await prisma.servico_Atividade.findMany({
+      where: {
+        servicoId: servicoId,
+        ativo: true
+      },
+      select: {
+        atividadeId: true
+      }
     });
+
+    const atividadeIds = atividadesAssociadas.map(a => a.atividadeId);
+
+    if (atividadeIds.length === 0) {
+      return { message: 'Nenhuma atividade ativa associada ao serviço.' };
+    }
+
+    // 2. Buscar atividades já associadas ao RDO
+    const atividadesExistentes = await prisma.rDOS_ServicoAtividade.findMany({
+      where: {
+        rdosId: rdosId,
+        servicoId: servicoId,
+        atividadeId: { in: atividadeIds }
+      },
+      select: {
+        atividadeId: true
+      }
+    });
+
+    const atividadesExistentesIds = atividadesExistentes.map(a => a.atividadeId);
+
+    // 3. Filtrar atividades que ainda não foram associadas ao RDO
+    const novasAtividades = atividadeIds.filter(id => !atividadesExistentesIds.includes(id));
+
+    // 4. Inserir apenas as novas atividades na tabela `rdos_atividade`
+    if (novasAtividades.length > 0) {
+      await prisma.rDOS_ServicoAtividade.createMany({
+        data: novasAtividades.map(atividadeId => ({
+          rdosId,
+          servicoId,
+          atividadeId
+        }))
+      });
+    }
+
+    return {
+      adicionadas: novasAtividades.length > 0 ? novasAtividades : 'Nenhuma nova atividade foi adicionada.',
+      jaExistiam: atividadesExistentesIds.length > 0 ? atividadesExistentesIds.map(id => `${id} ...já existe...`) : 'Nenhuma atividade já existente.'
+    };
   }
 
-  // 5. Retornar quais atividades foram inseridas e quais já existiam
-  return {
-    adicionadas: novasAtividades.length > 0 ? novasAtividades : 'Nenhuma nova atividade foi adicionada.',
-    jaExistiam: atividadesExistentesIds.length > 0 ? atividadesExistentesIds.map(id => `${id} ...já existe...`) : 'Nenhuma atividade já existente.'
-  };
+  // 4. e 5. Executar apenas quando `data` for válido
+  await prisma.rDOS_ServicoAtividade.createMany({
+    data: atividades.map(atividade => ({
+      rdosId,
+      servicoId,
+      atividadeId: atividade.atividadeId,
+      dataHoraInicio: atividade.dataHoraInicio,
+      dataHoraFim: atividade.dataHoraFim
+    }))
+  });
+
+  return { message: 'Atividades associadas com sucesso (passos 4 e 5).' };
+
 }
 
 async desassociarRDOSServicoComAtividades(rdosId: string, servicoId: string) {
@@ -463,7 +487,51 @@ async findRDOSCompleto(rdosId: string) {
 
   return resultado; 
 }
-  
+
+async getAssociationsComNome(id: string) {
+  const data = await prisma.rDOS_ServicoAtividade.findMany({
+    where: {
+      rdosId: id,
+ // Filtra as associações onde ativo é true
+    },
+    select: {
+      servico: { select: { id: true, nome: true } },  // Inclui dados do serviço relacionado
+      atividade: { select: { id: true, nome: true } },
+      dataHoraInicio: true,
+      dataHoraFim: true,
+    },
+  });
+
+  // Agrupa as atividades por servicoId
+  const result = data.reduce((acc, item) => {
+    // Verifica se já existe um serviço no acumulador
+    if (!acc[item.servico.id]) {
+      acc[item.servico.id] = {
+        servicoId: item.servico.id,
+        nome: item.servico.nome,  // Nome do serviço
+        atividades: [],
+      };
+    }
+
+    // Adiciona a atividade ao serviço correspondente
+    acc[item.servico.id].atividades.push({
+      atividadeId: item.atividade.id,
+      nome: item.atividade.nome,
+      dataHoraInicio: item.dataHoraInicio 
+      ? new Date(item.dataHoraInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) 
+  : '00:00',
+      dataHoraFim: item.dataHoraFim
+      ? new Date(item.dataHoraFim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) 
+      : '00:00',
+    });
+
+    return acc;
+  }, {} as Record<string, { servicoId: string; nome: string; atividades: { atividadeId: string, nome: string, dataHoraInicio: string, dataHoraFim: string }[] }>);
+
+  // Converte o objeto de serviços para um array
+  return Object.values(result);
+}
+
 }
 
 

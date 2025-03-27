@@ -29,6 +29,8 @@ router.get('/v1/associar/rdos/:rdosId/servicos/',rdoscontroller.getServicesByRDO
 router.get('/v1/associar/rdos/servicos/',rdoscontroller.getAssociations.bind(rdoscontroller))
 // Remover associação entre um serviço e um RDOS
 router.delete('/v1/associar/rdos/:rdosId/servicos/:servicoId/excluir',rdoscontroller.unassignService.bind(rdoscontroller))
+// Editar associação entre um serviço e um RDOS
+router.put('/v1/associar/rdos/:rdosId/servicos/:servicoId/editar',rdoscontroller.updateAssignService.bind(rdoscontroller))
 
 
 // Rotas de RDOS_atividades
@@ -42,9 +44,9 @@ router.get('/v1/associar/rdos/:rdosId/atividades/',rdoscontroller.getActivitiesB
 // Buscar associações atividade x RDOS
 router.get('/v1/associar/rdos/atividades/',rdoscontroller.getAssociationsAtividade.bind(rdoscontroller))
 // Remover associação entre uma atividade e um RDOS
-router.delete('/v1/associar/rdos/:rdosId/atividades/:atividadeId/excluir',rdoscontroller.unassignAtividade.bind(rdoscontroller))
-// Editar data-hora dos equipamentos de um RDOS
-router.put('/v1/associar/rdos/:rdosId/atividades/:atividadeId/editar',rdoscontroller.updateAtividade.bind(rdoscontroller))
+router.delete('/v1/associar/rdos/:rdosId/atividades/:atividadeId/excluir/:servicoId',rdoscontroller.unassignAtividade.bind(rdoscontroller))
+// Editar data-hora das atividades de um RDOS
+//router.put('/v1/associar/rdos/:rdosId/atividades/:atividadeId/editar',rdoscontroller.updateAssignService.bind(rdoscontroller))
 
 // Rotas de RDOS_equipamentos
 // Associar equipamento a RDOS
@@ -81,5 +83,9 @@ router.get('/v1/associar/rdos/motivos-de-pausa/',rdoscontroller.getAssociationsB
 router.delete('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoPausaId/excluir',rdoscontroller.unassignBreak.bind(rdoscontroller))
 // Editar datas de início e fim das pausas de um RDOS
 router.put('/v1/associar/rdos/:rdosId/motivos-de-pausa/:motivoPausaId/editar',rdoscontroller.updateBreaks.bind(rdoscontroller))
+
+// Buscar associações atividade x serviço com nomes
+router.get('/v1/associar/rdos/:id/servicos_atividades/',rdoscontroller.getAssociationsWithName.bind(rdoscontroller))
+
 
 export default router;

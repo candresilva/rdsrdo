@@ -89,8 +89,9 @@ async assignService(req: Request, res: Response) {
     try {
       console.log("params",req.params);
         const { rdosId, servicoId } = req.params;
+        const { atividades = [] } = req.body;
 
-        const resultado = await this.rdosService.associarServico(rdosId,servicoId);
+        const resultado = await this.rdosService.associarServico(rdosId,servicoId, atividades);
 
         res.status(200).json({ message: resultado });
     } catch (error: any) {
@@ -146,8 +147,8 @@ async assignAtividade(req: Request, res: Response) {
 };
 
 async unassignAtividade(req: Request, res: Response) {
-const {rdosId, atividadeId } = req.params;
-await this.rdosService.removerAtividade(rdosId, atividadeId);
+const {rdosId, atividadeId, servicoId } = req.params;
+await this.rdosService.removerAtividade(rdosId, atividadeId, servicoId);
 res.status(204).send();
 }
 
@@ -177,14 +178,22 @@ res.json(servicos);
 }
 }
 
-async updateAtividade(req: Request, res: Response) {
-  const { rdosId, atividadeId } = req.params;
-  const rdos = await this.rdosService.atualizarAtividades(rdosId, atividadeId, req.body);
-  if (!rdos) {
-    res.status(404).json({ message: 'RDOS não encontrada' });
+
+async updateAssignService(req: Request, res: Response) {
+  try {
+    console.log("params",req.params);
+      const { rdosId, servicoId } = req.params;
+      const { atividadeId, dataHoraInicio = "00:00", dataHoraFim = "00:00" } = req.body;
+    
+      const resultado = await this.rdosService.atualizarAtividades(
+        rdosId, servicoId, atividadeId,dataHoraInicio, dataHoraFim);
+
+      res.status(200).json({ message: resultado });
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
   }
-  res.json(rdos);
-}
+};
+
 
 // RDOS_Equipamento  --------------------------------------------
 
@@ -417,6 +426,18 @@ async getCompleteById(req: Request, res: Response) {
   } else {
     res.status(500).json({ message: 'Erro desconhecido ao buscar RDOS por ID' });
   }
+}
+}
+
+async getAssociationsWithName(req: Request, res: Response) {
+  const { id } = req.params;
+  try{
+  const servicos =  await this.rdosService.buscarAssociacoesComNome(id);
+  res.json(servicos);
+} catch (err:any) {
+    console.error('Erro ao listar servicos:', err);
+    res.status(500).json({ message: err.message });
+//    next(err);
 }
 }
 

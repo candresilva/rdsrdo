@@ -26,6 +26,10 @@ router.patch('/v1/associar/servicos/:servicoId/atividades/:atividadeId/alterar-s
 router.get('/v1/associar/servicos/:servicoId/atividades/',servicocontroller.getActivitiesByServiceId.bind(servicocontroller))
 // Buscar associações atividade x serviço
 router.get('/v1/associar/servicos/atividades/',servicocontroller.getAssociations.bind(servicocontroller))
+// Buscar associações atividade x serviço com nomes
+router.get('/v1/associar/servicos/:servicoId/atividades/nome',servicocontroller.getAssociationsWithName.bind(servicocontroller))
+// Buscar todas associações atividade x serviços com nomes
+router.get('/v1/associar/servicos/atividades/nome',servicocontroller.getAllAssociationsWithName.bind(servicocontroller))
 
 
 export default router;
