@@ -89,8 +89,10 @@ async assignService(req: Request, res: Response) {
     try {
       console.log("params",req.params);
         const { rdosId, servicoId } = req.params;
-        const { atividades = [] } = req.body;
-
+        const atividades = Array.isArray(req.body) ? req.body : [];
+        console.log("at", atividades)
+        console.log("at2", req.body)
+ 
         const resultado = await this.rdosService.associarServico(rdosId,servicoId, atividades);
 
         res.status(200).json({ message: resultado });

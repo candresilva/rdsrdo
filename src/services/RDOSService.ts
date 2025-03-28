@@ -100,15 +100,41 @@ export class RDOSService {
 async associarServico(rdosId:string, servicoId: string, atividades: any) {
   // Verifica se o serviço já está associado à RDOS
   const existente = await this.rdosRepository.findByRDOSAndServico(rdosId,servicoId);
+  console.log("ex",existente)
 
   if (existente) {
       throw new Error('O serviço já está associado a este RDOS.');
   }
 
+  //Tratamento de datas
+  const registro = await this.rdosRepository.findById(rdosId);
+  const somenteDia = registro.data
+  const ajustarData = (dataBase: Date, horaMinuto: string) => {
+    const [hora, minuto] = horaMinuto.split(":").map(Number);
+    const dataAjustada = new Date(dataBase);
+    dataAjustada.setUTCHours(hora, minuto, 0, 0); 
+    return dataAjustada;
+  };
+
+  const atividadesAjustadas = atividades.map((atividade: any)=>{
+    const dataInicioAjustada = atividade.dataHoraInicio ?
+    ajustarData(somenteDia, atividade.dataHoraInicio) : 
+    ajustarData(somenteDia, "00:01");
+    const dataFimAjustada = atividade.dataHoraFim ? 
+    ajustarData(somenteDia, atividade.dataHoraFim) : 
+    ajustarData(somenteDia, "00:02");
+    return {
+      ...atividade,
+      dataHoraInicio: dataInicioAjustada,
+      dataHoraFim: dataFimAjustada,
+    };
+  });
+
+
   // Associa o serviço à RDOS
   await this.rdosRepository.criarAssociacao(rdosId,servicoId);
   // Chama a função que associa as atividades do serviço ao RDO
-  const resultadoAtividades = await this.rdosRepository.associarRDOSServicoComAtividades(rdosId, servicoId, atividades);
+  const resultadoAtividades = await this.rdosRepository.associarRDOSServicoComAtividades(rdosId, servicoId, atividadesAjustadas);
 
   return {      
     message: 'Serviço associado com sucesso!',

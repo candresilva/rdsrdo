@@ -489,6 +489,16 @@ async findRDOSCompleto(rdosId: string) {
 }
 
 async getAssociationsComNome(id: string) {
+  const allServices = await prisma.rDOS_Servico.findMany({
+    where: {
+      rdosId: id,
+    },
+    select: { 
+      servico: { select: {id: true, nome: true }}
+  }
+});
+console.log("as",allServices)
+
   const data = await prisma.rDOS_ServicoAtividade.findMany({
     where: {
       rdosId: id,
@@ -528,8 +538,15 @@ async getAssociationsComNome(id: string) {
     return acc;
   }, {} as Record<string, { servicoId: string; nome: string; atividades: { atividadeId: string, nome: string, dataHoraInicio: string, dataHoraFim: string }[] }>);
 
+  // Agora garantimos que todos os serviços sejam incluídos
+  const finalResult = allServices.map(service => ({
+    servicoId: service.servico.id,
+    nome: service.servico.nome,
+    atividades: result[service.servico.id]?.atividades || []  // Se não houver atividades, retorna array vazio
+  }));
+
   // Converte o objeto de serviços para um array
-  return Object.values(result);
+  return finalResult;
 }
 
 }
